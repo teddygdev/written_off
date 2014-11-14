@@ -12,29 +12,41 @@
 				<form name="userForm">
 					<div class="form-group" show-errors='{showSuccess: true}'>
 						<label class="control-label">Ruler Name</label>
-						<input type="text" class="form-control" name="name" ng-model="user.name" required placeholder="What is your name?" />
+						<div class="input-group">
+							<input type="text" class="form-control" name="name" ng-model="userName" required placeholder="What will be the name of your ruler?" />
+							<span class="input-group-btn">
+							    	<button class="btn btn-default" type="button" ng-click="randomName()">Randomize</button>
+							</span>
+						</div>	
 					</div>
 					<div class="form-group" show-errors='{showSuccess: true}'>
 						<label class="control-label">Settlement Name</label>
-						<input type="text" class="form-control" name="town" ng-model="user.town" required placeholder="What will be the name of your town?" />
+						<div class="input-group">
+							<input type="text" class="form-control" name="town" ng-model="userTown" required placeholder="What will be the name of your settlement?" />
+							<span class="input-group-btn">
+						    	<button class="btn btn-default" type="button" ng-click="randomTown()">Randomize</button>
+						    </span>
+					    </div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<label class="control-label">&nbsp Difficulty: &nbsp</label>
+							<label class="control-label">&nbsp Starting Conditions: &nbsp</label>
 							<div class="btn-group">
 								<label class="btn btn-primary" ng-model="radioDifficulty" btn-radio="'Easy'">Easy</label>
 								<label class="btn btn-primary" ng-model="radioDifficulty" btn-radio="'Medium'">Medium</label>
 								<label class="btn btn-primary" ng-model="radioDifficulty" btn-radio="'Hard'">Hard</label>
 							</div>
+							<!--	
 							<label class="control-label">&nbsp Ruler Gender: &nbsp</label>
 							<div class="btn-group">
 								<label class="btn btn-primary" ng-model="radioGender" btn-radio="'Male'">Male</label>
 								<label class="btn btn-primary" ng-model="radioGender" btn-radio="'Female'">Female</label>
-							</div>
+							</div> 
+							-->
 							<label class="control-label">&nbsp Climate: &nbsp</label>
 							<div class="btn-group">
-								<label class="btn btn-primary" ng-model="radioClimate" btn-radio="'Fair'">Fair</label>
-								<label class="btn btn-primary" ng-model="radioClimate" btn-radio="'Mild'">Mild</label>
+								<label class="btn btn-primary" ng-model="radioClimate" btn-radio="'Mild'">Fair</label>
+								<label class="btn btn-primary" ng-model="radioClimate" btn-radio="'Fair'">Mild</label>
 								<label class="btn btn-primary" ng-model="radioClimate" btn-radio="'Harsh'">Harsh</label>
 							</div>
 						</div>

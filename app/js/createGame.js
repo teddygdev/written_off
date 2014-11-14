@@ -14,31 +14,49 @@ angular.module('writtenOffApp.createGame', ['ngRoute'])
 
 .controller('CreateGameCtrl', ['$scope', '$location', '$rootScope', 'util', function($scope, $location, $rootScope, util) {
 
-$scope.save = function(param) {
-        util.save(param);
+$scope.save = function(param, name) {
+        util.save(param, name);
     }
+
+$scope.randomName = function() {
+        $scope.userName=faker.name.firstName();
+    }
+
+$scope.randomTown = function() {
+        $scope.userTown=faker.address.city();
+    }
+
 
 $scope.radioDifficulty = 'Medium';
 $scope.radioGender = 'Male';
-$scope.radioClimate = 'Mild';
+$scope.radioClimate = 'Fair';
+$scope.randomName();
+$scope.randomTown();
 
 
 $scope.startNewGame = function() {
         $scope.$broadcast('show-errors-check-validity');
 		  if ($scope.userForm.$valid) {
 		  	$scope.resetValues();
-		  	$scope.save($rootScope.vars);
+		  	$scope.save($rootScope.vars, "vars");
+		  	$scope.save($rootScope.varsConst, "const");
 		    $location.url('/game');
 		  }
      
     };
 
 $scope.resetValues = function() {
+		$rootScope.varsConst=
+		{
+			"rulerName": $scope.userName,
+		  	"townName": $scope.userTown,
+		  	"gender": $scope.radioGender,
+		  	"climate": $scope.radioClimate
+		};
+
         $rootScope.vars=
         {
-       	  "elapsedTicks": 0,	
-		  "rulerName": $scope.user.name,
-		  "townName": $scope.user.town,
+       	  "elapsedTicks": 0,
 		  "food": 0,
 		  "logs": 0,
 		  "stone": 0,

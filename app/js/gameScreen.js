@@ -19,12 +19,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     
-    $scope.save = function(param) {
-        util.save(param);
+    $scope.save = function(param, name) {
+        util.save(param, name);
     }
 
-    $scope.load = function() {
-       $rootScope.vars=util.load();
+    $scope.load = function(name) {
+       $rootScope.vars=util.load(name);
     }  
 
     $scope.doCollapse = function() {
@@ -34,7 +34,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.gameLoopTick = function() {
       $rootScope.vars.food++;
       $rootScope.vars.elapsedTicks++;
-      if ($rootScope.vars.elapsedTicks%30 == 0) $scope.save($rootScope.vars);
+      if ($rootScope.vars.elapsedTicks%30 == 0) $scope.save($rootScope.vars, "vars");
         
     };
    
@@ -44,7 +44,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.hideBadFoodVal = true;
     $scope.hideGoodFoodVal = true;
     $scope.foodAttempts = 0;
-    $scope.load();
+    $scope.load("vars");
 
     $scope.clickFood = function() {
     	var random = Math.floor((Math.random() * 100) + 1);
