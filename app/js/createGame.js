@@ -34,6 +34,7 @@ $scope.randomName();
 $scope.randomTown();
 
 
+
 $scope.startNewGame = function() {
         $scope.$broadcast('show-errors-check-validity');
 		  if ($scope.userForm.$valid) {
@@ -56,6 +57,7 @@ $scope.resetValues = function() {
 
         $rootScope.vars=
         {
+          "date":moment("03-01-0001 12:00 +0000", "MM-DD-YYYY HH:mm Z"),		
        	  "elapsedTicks": 0,
 		  "food": 0,
 		  "logs": 0,

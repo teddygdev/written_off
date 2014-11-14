@@ -17,14 +17,17 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         middle: false,
         right: false
     };
-
-    
     $scope.save = function(param, name) {
         util.save(param, name);
     }
 
     $scope.load = function(name) {
        $rootScope.vars=util.load(name);
+       if (name=="vars") {
+        $scope.date = moment($rootScope.vars.date);
+        $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
+       }
+       
     }  
 
     $scope.doCollapse = function() {
@@ -32,21 +35,16 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     $scope.gameLoopTick = function() {
-      console.log("tick-tock");
+      //console.log("tick-tock");
       $rootScope.vars.food++;
       $rootScope.vars.elapsedTicks++;
       if ($rootScope.vars.elapsedTicks%30 == 0) $scope.save($rootScope.vars, "vars");
+      $scope.date.add(1, 'd');
+      $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
+
         
     };
-   
-    $scope.doCollapse();
     
-
-    $scope.hideBadFoodVal = true;
-    $scope.hideGoodFoodVal = true;
-    $scope.foodAttempts = 0;
-    $scope.load("vars");
-
     $scope.clickFood = function() {
     	var random = Math.floor((Math.random() * 100) + 1);
     	if (random < 10) {
@@ -83,6 +81,14 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
       $timeout.cancel($scope.timer);
     });
 
+    $scope.doCollapse();
+    
+
+    $scope.hideBadFoodVal = true;
+    $scope.hideGoodFoodVal = true;
+    $scope.foodAttempts = 0;
+    $scope.load("vars");
+
     //
     //
     //
@@ -91,6 +97,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     //
     //
     //
+
+
 
       var timeStep = 500; // time step (ms)
       //var limit = 100; #optional limit
