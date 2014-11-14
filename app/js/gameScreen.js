@@ -32,6 +32,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     $scope.gameLoopTick = function() {
+      console.log("tick-tock");
       $rootScope.vars.food++;
       $rootScope.vars.elapsedTicks++;
       if ($rootScope.vars.elapsedTicks%30 == 0) $scope.save($rootScope.vars, "vars");
@@ -77,6 +78,11 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         $scope.hideGoodFoodVal=true;
     };
 
+    //to deal with page changes
+    $scope.$on("$destroy", function( event ) {
+      $timeout.cancel($scope.timer);
+    });
+
     //
     //
     //
@@ -115,7 +121,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         //console.log("count2");
         $scope.gameLoopTick();
         //if(c4 < limit) $timeout(compensation, delta); #optional limit
-        $timeout(compensation, delta);
+       $scope.timer = $timeout(compensation, delta);
       };
       pcDate = new Date();
       time = pcDate.getTime();
