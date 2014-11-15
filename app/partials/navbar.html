@@ -1,4 +1,4 @@
-    <nav class="navbar navbar-default" role="navigation">
+    <nav class="navbar navbar-default" role="navigation" ng-controller="navbarCtrl">
         <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -32,20 +32,10 @@
                 </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-            <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>           
+            <li><button type="button" class="btn btn-default navbar-btn" ng-class="{'btn-primary':x1}" ng-click="changeSpeed('x1')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button></li>
+            <li><button type="button" class="btn btn-default navbar-btn" ng-class="{'btn-primary':x2}" ng-click="changeSpeed('x2')"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></button></li>
+            <li><button type="button" class="btn btn-default navbar-btn" ng-class="{'btn-primary':x4}" ng-click="changeSpeed('x4')"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></button></li>
+            <li><button type="button" class="btn btn-default navbar-btn" ng-class="{'btn-primary':x8}" ng-click="changeSpeed('x8')"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span><span class="glyphicon glyphicon-forward" aria-hidden="true"></span><span class="glyphicon glyphicon-forward" aria-hidden="true"></span><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></button></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

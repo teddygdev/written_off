@@ -18,6 +18,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         right: false
     };
     $scope.save = function(param, name) {
+        $rootScope.vars.date = $scope.date;
         util.save(param, name);
     }
 
@@ -35,11 +36,11 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     $scope.gameLoopTick = function() {
-      //console.log("tick-tock");
-      $rootScope.vars.food++;
       $rootScope.vars.elapsedTicks++;
-      if ($rootScope.vars.elapsedTicks%30 == 0) $scope.save($rootScope.vars, "vars");
-      $scope.date.add(1, 'd');
+      if ($rootScope.vars.elapsedTicks%30 == 0) {
+        $scope.save($rootScope.vars, "vars");
+      }
+      $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
 
         
@@ -76,12 +77,28 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         $scope.hideGoodFoodVal=true;
     };
 
+    $scope.fpsMinus = function() {
+        if ($scope.fps>1) $scope.fps--;
+        $scope.timeStep = 1000/$scope.fps;
+        console.log($scope.timeStep/100);
+    };
+
+    $scope.fpsPlus = function() {
+        if ($scope.fps<10) $scope.fps++;
+        $scope.timeStep = 1000/$scope.fps;
+        console.log($scope.timeStep/100);
+    };
+
+    
     //to deal with page changes
     $scope.$on("$destroy", function( event ) {
       $timeout.cancel($scope.timer);
     });
 
     $scope.doCollapse();
+    $scope.optionsCollapsed = true;
+    $scope.fps=10;
+    
     
 
     $scope.hideBadFoodVal = true;
@@ -100,49 +117,49 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
 
 
-      var timeStep = 500; // time step (ms)
-      //var limit = 100; #optional limit
-      
-      var pcDate, delta = timeStep, time, newtime;
-      var c4 = 0;
-      
-      var compcount = 0;
-      var compensation = function() {
-        pcDate = new Date();
-        c4++;
-        newtime = pcDate.getTime();
-        delta += timeStep - (newtime - time);
-        while(delta < 0) {
-          delta+=timeStep;
-          compcount++;
-          //
-          //calculations for compensation
-          //        
-          //console.log("count");
-          $scope.gameLoopTick();
-          c4++;
-        };
-        time = newtime;
-        //
-        //calculations inside windows
-        //
-        //console.log("count2");
-        $scope.gameLoopTick();
-        //if(c4 < limit) $timeout(compensation, delta); #optional limit
-       $scope.timer = $timeout(compensation, delta);
-      };
+    $scope.timeStep = 1000/$scope.fps; // time step (ms)
+    //var limit = 100; #optional limit
+    
+    var pcDate, delta = $scope.timeStep, time, newtime;
+    var c4 = 0;
+    
+    var compcount = 0;
+    var compensation = function() {
       pcDate = new Date();
-      time = pcDate.getTime();
-      $timeout(compensation, timeStep);    
+      c4++;
+      newtime = pcDate.getTime();
+      delta += $scope.timeStep - (newtime - time);
+      while(delta < 0) {
+        delta+=$scope.timeStep;
+        compcount++;
+        //
+        //calculations for compensation
+        //        
+        //console.log("count");
+        $scope.gameLoopTick();
+        c4++;
+      };
+      time = newtime;
+      //
+      //calculations inside windows
+      //
+      //console.log("count2");
+      $scope.gameLoopTick();
+      //if(c4 < limit) $timeout(compensation, delta); #optional limit
+     $scope.timer = $timeout(compensation, delta);
+    };
+    pcDate = new Date();
+    time = pcDate.getTime();
+    $timeout(compensation, $scope.timeStep);    
 
-      //
-      //
-      //
-      // game loop end
-      //
-      //
-      //
-      //  
+    //
+    //
+    //
+    // game loop end
+    //
+    //
+    //
+    //  
 
  
     

@@ -10,6 +10,7 @@ angular.module('writtenOffApp', [
   'writtenOffApp.gameScreen',
   'writtenOffApp.newGame',
   'writtenOffApp.createGame',
+  'writtenOffApp.navbar',
   'ui.bootstrap',
   'ui.bootstrap.showErrors',
   'LocalStorageModule'
