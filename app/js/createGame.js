@@ -29,7 +29,7 @@ $scope.randomTown = function() {
 
 $scope.radioDifficulty = 'Medium';
 $scope.radioGender = 'Male';
-$scope.radioClimate = 'Fair';
+$scope.radioClimate = 'Mild';
 $scope.randomName();
 $scope.randomTown();
 
@@ -64,24 +64,14 @@ $scope.resetValues = function() {
 		  "stone": 0,
 		  "iron": 0,
 		  "firewood": 0,
-		  "hideCoats": 0,
-		  "woolCoats": 0,
-		  "warmCoats": 0,
 		  "coats": 0,
-		  "coal": 0,
 		  "tools": 0,
 		  "wool": 0,
 		  "leather": 0,
-		  "men": 0,
-		  "women": 0,
-		  "villagers": 0,
-		  "adults": 0,
-		  "children": 0,
-		  "girls": 0,
-		  "boys": 0,
-		  "farms": 0,
-		  "farmers": 0,
-		  //"families": 0
+		  "population": 0,
+		  "adultsNum": 0,
+		  "studentsNum": 0,
+		  "childrenNum": 0
 		};
 
 		$rootScope.jobs=
@@ -152,6 +142,91 @@ $scope.resetValues = function() {
 			$rootScope.vars.coats=20;
 		}
 
+		//http://www.usclimatedata.com/
+		//if t<10 -> use firewood
+		//if t<0  -> use 2xfirewood
+		//if t<-10-> use 3xfirewood
+
+		//if no coat
+		//if >20 no coat needed
+		//if 15-20 75% productivity
+		//if 10-15 50% productivity
+		//if 5-10 25% productivity
+		//if 0-5  10% productivity
+		//if <0   5% productivity
+		if ($scope.radioClimate=='Fair') {
+			$rootScope.defaultTemp= 
+			[
+				{'max':10, 'min':0}, //jan tennessee
+				{'max':13, 'min':2},
+				{'max':18, 'min':7},
+				{'max':23, 'min':12},
+				{'max':27, 'min':17},
+				{'max':32, 'min':21},
+				{'max':33, 'min':23},
+				{'max':33, 'min':23},
+				{'max':30, 'min':18},
+				{'max':24, 'min':12},
+				{'max':17, 'min':7},
+				{'max':11, 'min':2}
+
+			];
+		}
+		else if ($scope.radioClimate=='Mild') {
+			$rootScope.defaultTemp= 
+			[
+				{'max':-1, 'min':-8}, //jan michigan 
+				{'max':0, 'min':-8},
+				{'max':7, 'min':-3},
+				{'max':14, 'min':3},
+				{'max':20, 'min':8},
+				{'max':26, 'min':14},
+				{'max':28, 'min':16},
+				{'max':27, 'min':15},
+				{'max':23, 'min':11},
+				{'max':16, 'min':5},
+				{'max':8, 'min':0},
+				{'max':1, 'min':-5}
+			];
+		}
+		else if ($scope.radioClimate=='Harsh') {
+			$rootScope.defaultTemp= 
+			[
+				{'max':-6, 'min':-16}, //jan north dakota 
+				{'max':-4, 'min':-13},
+				{'max':3, 'min':-7},
+				{'max':13, 'min':-1},
+				{'max':19, 'min':6},
+				{'max':24, 'min':12},
+				{'max':28, 'min':15},
+				{'max':27, 'min':13},
+				{'max':21, 'min':8},
+				{'max':13, 'min':1},
+				{'max':3, 'min':-7},
+				{'max':-5, 'min':-14}
+			];
+		}
+		else { //frigid
+			$rootScope.defaultTemp= 
+			[
+				{'max':-17, 'min':-27}, //jan alaska fairbanks
+				{'max':-12, 'min':-25},
+				{'max':-4, 'min':-19},
+				{'max':7, 'min':-6},
+				{'max':16, 'min':3},
+				{'max':22, 'min':10},
+				{'max':23, 'min':11},
+				{'max':19, 'min':8},
+				{'max':13, 'min':2},
+				{'max':1, 'min':-9},
+				{'max':-12, 'min':-21},
+				{'max':-15, 'min':-25}
+			];
+		}
+
+
+
+		
 		for (var i=0; i < $rootScope.vars.adultsNum; i++) {
 			var randomAge=Math.floor((Math.random() * 10) + 1) + 20;
 			var birthdayDay=Math.floor((Math.random() * 363) + 1);

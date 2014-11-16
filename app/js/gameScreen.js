@@ -36,9 +36,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     $scope.gameLoopTick = function() {
-      $rootScope.vars.elapsedTicks++;
-      if ($rootScope.vars.elapsedTicks%30 == 0) {
-        $scope.save($rootScope.vars, "vars");
+      //$rootScope.vars.elapsedTicks++;
+      //if ($rootScope.vars.elapsedTicks%30 == 0) {
+      //  $scope.save($rootScope.vars, "vars");
+      //}
+      if ($scope.date.dayOfYear() != $scope.dayOld) {
+        $scope.dayOld=$scope.date.dayOfYear();
+        console.log("newday");
       }
       $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
@@ -80,13 +84,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.fpsMinus = function() {
         if ($scope.fps>1) $scope.fps--;
         $scope.timeStep = 1000/$scope.fps;
-        console.log($scope.timeStep/100);
+        //console.log($scope.timeStep/100);
     };
 
     $scope.fpsPlus = function() {
         if ($scope.fps<10) $scope.fps++;
         $scope.timeStep = 1000/$scope.fps;
-        console.log($scope.timeStep/100);
+        //console.log($scope.timeStep/100);
     };
 
     
@@ -95,18 +99,25 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
       $timeout.cancel($scope.timer);
     });
 
+
+
     $scope.doCollapse();
     $scope.optionsCollapsed = true;
     $scope.fps=10;
+
     
-    console.log($rootScope.adults);
-    console.log($rootScope.children);
+    //console.log($rootScope.adults);
+    //console.log($rootScope.children);
     //console.log($rootScope.jobs.unemployed);
 
     $scope.hideBadFoodVal = true;
     $scope.hideGoodFoodVal = true;
     $scope.foodAttempts = 0;
     $scope.load("vars");
+
+    $scope.dayOld=$scope.date.dayOfYear();
+    //console.log($scope.dayOld);
+    console.log($rootScope.defaultTemp);
 
     //
     //
