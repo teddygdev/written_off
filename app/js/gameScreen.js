@@ -99,7 +99,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.optionsCollapsed = true;
     $scope.fps=10;
     
-    
+    console.log($rootScope.adults);
+    console.log($rootScope.children);
+    //console.log($rootScope.jobs.unemployed);
 
     $scope.hideBadFoodVal = true;
     $scope.hideGoodFoodVal = true;
