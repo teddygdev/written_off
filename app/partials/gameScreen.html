@@ -5,15 +5,15 @@
 			  	<div class="col-md-2">Logs: {{$root.vars.logs}}</div>
 			  	<div class="col-md-2">Stone: {{$root.vars.stone}}</div>
 			  	<div class="col-md-2">Iron: {{$root.vars.iron}}</div>
-			  	<div class="col-md-2"><span class="glyphicon glyphicon-user" aria-hidden="true">{{$root.vars.adultsNum}}/{{$root.vars.studentsNum}}/{{$root.vars.childrenNum}}</span></div>
+			  	<div class="col-md-2" popover="Adults / Students / Children" popover-trigger="mouseenter"><span class="glyphicon glyphicon-user" aria-hidden="true">{{$root.vars.adultsNum}}/{{$root.vars.studentsNum}}/{{$root.vars.childrenNum}}</span></div>
 			  	<div class="col-md-2">{{datePretty}}</div>
 			</div>
 			<div class="row">
-			  	<div class="col-md-2 col-md-offset-1">Firewood: {{$root.vars.food}}</div>
-			  	<div class="col-md-2">Tools: {{$root.vars.logs}}</div>
-			  	<div class="col-md-2">Coats: {{$root.vars.stone}}</div>
-			  	<div class="col-md-2">Herbs: {{$root.vars.iron}}</div>
-			  	<div class="col-md-2">Weather: Cold :(</span></div>
+			  	<div class="col-md-2 col-md-offset-1">Firewood: {{$root.vars.firewood}}</div>
+			  	<div class="col-md-2">Tools: {{$root.vars.tools}}</div>
+			  	<div class="col-md-2">Coats: {{$root.vars.coats}}</div>
+			  	<div class="col-md-2">Herbs: {{$root.vars.herbs}}</div>
+			  	<div class="col-md-2">Weather: {{$root.vars.todayWeather}}&deg C </span></div>
 			</div>
 		</div>
 		

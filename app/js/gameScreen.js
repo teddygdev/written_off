@@ -18,36 +18,85 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         right: false
     };
     $scope.save = function(param, name) {
-        $rootScope.vars.date = $scope.date;
         util.save(param, name);
     }
 
     $scope.load = function(name) {
-       $rootScope.vars=util.load(name);
+       $rootScope[name]=util.load(name);
        if (name=="vars") {
-        $scope.date = moment($rootScope.vars.date);
-        $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
+            $scope.date = moment($rootScope.vars.date);
+            $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
        }
-       
-    }  
+    }
+
+    $scope.loadAll = function() {
+        $scope.load("vars");
+        $scope.load("varsConst");
+        $scope.load("jobs");
+        $scope.load("buildings");
+        $scope.load("adults");
+        $scope.load("children");
+        $scope.load("students");
+        $scope.load("defaultTemp");
+    };  
+
+     $scope.saveAll = function() {
+      $rootScope.vars.date = $scope.date;
+      $scope.save($rootScope.vars, "vars");
+      $scope.save($rootScope.varsConst, "varsConst");
+      $scope.save($rootScope.jobs, "jobs");
+      $scope.save($rootScope.buildings, "buildings");
+      $scope.save($rootScope.adults, "adults");
+      $scope.save($rootScope.children, "children");
+      $scope.save($rootScope.students, "students");
+      $scope.save($rootScope.defaultTemp, "defaultTemp");
+    };  
+
+    $scope.random = function(max, min) {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
 
     $scope.doCollapse = function() {
         $scope.isCollapsedGather = !$scope.checkModel.manualGather;
     };
 
     $scope.gameLoopTick = function() {
-      //$rootScope.vars.elapsedTicks++;
-      //if ($rootScope.vars.elapsedTicks%30 == 0) {
-      //  $scope.save($rootScope.vars, "vars");
-      //}
-      if ($scope.date.dayOfYear() != $scope.dayOld) {
-        $scope.dayOld=$scope.date.dayOfYear();
-        console.log("newday");
+      if ($scope.date.dayOfYear() != $scope.dayOld) { //new day
+          $scope.dayOld=$scope.date.dayOfYear();
+          //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
+          if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
+            //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
+            $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
+          }
+          else if (($rootScope.defaultTemp[$scope.monthOld].max<0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
+            //$rootScope.vars.todayWeather=Math.floor((Math.random() * Math.abs($rootScope.defaultTemp[$scope.monthOld].min)) + Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
+            $rootScope.vars.todayWeather=$scope.random(Math.abs($rootScope.defaultTemp[$scope.monthOld].min), Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
+            $rootScope.vars.todayWeather *= -1;
+          }
+          else if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
+            $rootScope.vars.todayWeather=Math.floor(Math.random() * ($rootScope.defaultTemp[$scope.monthOld].max + Math.abs($rootScope.defaultTemp[$scope.monthOld].min))) - Math.abs($rootScope.defaultTemp[$scope.monthOld].min);
+            if ($rootScope.vars.todayWeather >= 0) $rootScope.vars.todayWeather++;
+          }
+
+
+          console.log($rootScope.vars.todayWeather);
+          //console.log("newday");
+
+          if ($scope.date.month() != $scope.monthOld) {//new month
+              $scope.monthOld=$scope.date.month();
+              console.log("month " + $scope.monthOld);
+              console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
+              console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
+          }
+
+          if ($scope.date.week() != $scope.weekOld) {//new week
+              $scope.weekOld=$scope.date.week();
+              console.log("week " + $scope.weekOld);
+              $scope.saveAll();
+          }
       }
       $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
-
-        
     };
     
     $scope.clickFood = function() {
@@ -113,11 +162,18 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.hideBadFoodVal = true;
     $scope.hideGoodFoodVal = true;
     $scope.foodAttempts = 0;
-    $scope.load("vars");
+    $scope.loadAll();
+    $scope.saveAll();
 
     $scope.dayOld=$scope.date.dayOfYear();
+    $scope.monthOld=$scope.date.month();
+    $scope.weekOld=$scope.date.week();
+
+    //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
+    //console.log($rootScope.vars.todayWeather);
+    //console.log("month " + $scope.monthOld);
     //console.log($scope.dayOld);
-    console.log($rootScope.defaultTemp);
+    //console.log($rootScope.defaultTemp[0].max);
 
     //
     //

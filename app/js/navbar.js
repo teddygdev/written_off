@@ -30,12 +30,34 @@ $scope.changeSpeed = function(str) {
           $scope.x8=false;
           $rootScope.multiplier=4;
         }
-        else {
+        else if (str=='x8') {
           $scope.x1=false;
           $scope.x2=false;
           $scope.x4=false;
           $scope.x8=true;
           $rootScope.multiplier=8;
+        }
+        //dev
+        else if (str=='x16') {
+          $scope.x1=false;
+          $scope.x2=false;
+          $scope.x4=false;
+          $scope.x8=false;
+          $rootScope.multiplier=16;
+        }
+        else if (str=='x32') {
+          $scope.x1=false;
+          $scope.x2=false;
+          $scope.x4=false;
+          $scope.x8=false;
+          $rootScope.multiplier=32;
+        }
+        else if (str=='x64') {
+          $scope.x1=false;
+          $scope.x2=false;
+          $scope.x4=false;
+          $scope.x8=false;
+          $rootScope.multiplier=64;
         }
     };
 $scope.changeSpeed('x1');

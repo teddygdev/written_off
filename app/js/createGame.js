@@ -40,8 +40,15 @@ $scope.startNewGame = function() {
 		  if ($scope.userForm.$valid) {
 		  	$scope.resetValues();
 		  	$scope.save($rootScope.vars, "vars");
-		  	$scope.save($rootScope.varsConst, "const");
+		  	$scope.save($rootScope.varsConst, "varsConst");
+		  	$scope.save($rootScope.jobs, "jobs");
+		  	$scope.save($rootScope.buildings, "buildings");
+		  	$scope.save($rootScope.adults, "adults");
+		  	$scope.save($rootScope.children, "children");
+		  	$scope.save($rootScope.students, "students");
+		  	$scope.save($rootScope.defaultTemp, "defaultTemp");
 		    $location.url('/game');
+
 		  }
      
     };
@@ -57,7 +64,7 @@ $scope.resetValues = function() {
 
         $rootScope.vars=
         {
-          "date":moment("03-01-0001 12:00 +0000", "MM-DD-YYYY HH:mm Z"),		
+          "date":moment("03-01-0001 12:00 +0000", "MM-DD-YYYY HH:mm Z"),
        	  "elapsedTicks": 0,
 		  "food": 0,
 		  "logs": 0,
@@ -66,12 +73,14 @@ $scope.resetValues = function() {
 		  "firewood": 0,
 		  "coats": 0,
 		  "tools": 0,
+		  "herbs": 0,
 		  "wool": 0,
 		  "leather": 0,
 		  "population": 0,
 		  "adultsNum": 0,
 		  "studentsNum": 0,
-		  "childrenNum": 0
+		  "childrenNum": 0,
+		  "todayWeather": 20
 		};
 
 		$rootScope.jobs=
@@ -112,6 +121,7 @@ $scope.resetValues = function() {
 			$rootScope.vars.adultsNum=12;
 			$rootScope.vars.studentsNum=0;
 			$rootScope.vars.childrenNum=12;
+			$rootScope.vars.population=24;
 			$rootScope.vars.food=2400;
 			$rootScope.vars.logs=150;
 			$rootScope.vars.stone=70;
@@ -124,6 +134,7 @@ $scope.resetValues = function() {
 			$rootScope.vars.adultsNum=10;
 			$rootScope.vars.studentsNum=0;
 			$rootScope.vars.childrenNum=10;
+			$rootScope.vars.population=20;
 			$rootScope.vars.food=1800;
 			$rootScope.vars.logs=120;
 			$rootScope.vars.stone=60;
