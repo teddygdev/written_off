@@ -60,16 +60,24 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         $scope.isCollapsedGather = !$scope.checkModel.manualGather;
     };
 
+    $scope.gather = function() {
+        $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
+    }
+
+    $scope.calculateGather = function(people, base1year) {
+        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040); //35040 - 15 minute intervals in a year
+        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
+        //goes off ~ 100 times (24*4)
+    }
+
     $scope.gameLoopTick = function() {
       if ($scope.date.dayOfYear() != $scope.dayOld) { //new day
           $scope.dayOld=$scope.date.dayOfYear();
-          //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
+          //temperature generation
           if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
-            //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
             $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
           }
           else if (($rootScope.defaultTemp[$scope.monthOld].max<0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
-            //$rootScope.vars.todayWeather=Math.floor((Math.random() * Math.abs($rootScope.defaultTemp[$scope.monthOld].min)) + Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
             $rootScope.vars.todayWeather=$scope.random(Math.abs($rootScope.defaultTemp[$scope.monthOld].min), Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
             $rootScope.vars.todayWeather *= -1;
           }
@@ -77,24 +85,23 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
             $rootScope.vars.todayWeather=Math.floor(Math.random() * ($rootScope.defaultTemp[$scope.monthOld].max + Math.abs($rootScope.defaultTemp[$scope.monthOld].min))) - Math.abs($rootScope.defaultTemp[$scope.monthOld].min);
             if ($rootScope.vars.todayWeather >= 0) $rootScope.vars.todayWeather++;
           }
-
-
-          console.log($rootScope.vars.todayWeather);
-          //console.log("newday");
+          
 
           if ($scope.date.month() != $scope.monthOld) {//new month
               $scope.monthOld=$scope.date.month();
-              console.log("month " + $scope.monthOld);
-              console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
-              console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
+             //console.log("month " + $scope.monthOld);
+             //console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
+             //console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
           }
 
           if ($scope.date.week() != $scope.weekOld) {//new week
               $scope.weekOld=$scope.date.week();
-              console.log("week " + $scope.weekOld);
+              //console.log("week " + $scope.weekOld);
               $scope.saveAll();
           }
       }
+      $scope.gather();
+      console.log($scope.date.hour());
       $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
     };
@@ -142,6 +149,21 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         //console.log($scope.timeStep/100);
     };
 
+    $scope.increaseWorkers = function(bool, str) {
+        if (bool==true) {
+          if ($rootScope.jobs.unemployed>0) {
+            $rootScope.jobs.unemployed--;
+            $rootScope.jobs[str]++;
+          }
+        }
+        else {
+          if ($rootScope.jobs[str]>0) {
+            $rootScope.jobs[str]--;
+            $rootScope.jobs.unemployed++;
+          }
+        }
+    };
+
     
     //to deal with page changes
     $scope.$on("$destroy", function( event ) {
@@ -152,6 +174,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     $scope.doCollapse();
     $scope.optionsCollapsed = true;
+    $scope.professionsCollapsed = false;
     $scope.fps=10;
 
     

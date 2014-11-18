@@ -1,11 +1,11 @@
 <div class="container">
 		<div class="panel panel-primary">
 			<div class="row">
-			  	<div class="col-md-2">Food: {{$root.vars.food}}</div>
+			  	<div class="col-md-2">Food: {{$root.vars.food | number: 2}}</div>
 			  	<div class="col-md-2">Logs: {{$root.vars.logs}}</div>
 			  	<div class="col-md-2">Stone: {{$root.vars.stone}}</div>
 			  	<div class="col-md-2">Iron: {{$root.vars.iron}}</div>
-			  	<div class="col-md-2" popover="Adults / Students / Children" popover-trigger="mouseenter"><span class="glyphicon glyphicon-user" aria-hidden="true">{{$root.vars.adultsNum}}/{{$root.vars.studentsNum}}/{{$root.vars.childrenNum}}</span></div>
+			  	<div class="col-md-2" popover="Adults / Students / Children / Total" popover-trigger="mouseenter"><span class="glyphicon glyphicon-user" aria-hidden="true">{{$root.vars.adultsNum}}/{{$root.vars.studentsNum}}/{{$root.vars.childrenNum}}/<b>{{$root.vars.population}}</b></span></div>
 			  	<div class="col-md-2">{{datePretty}}</div>
 			</div>
 			<div class="row">
@@ -19,6 +19,7 @@
 		
 		<div class="row">
 			<div class="col-md-12">
+				<!--
 				<div class="btn-group" ng-click="doCollapse()">
 		        	<label class="btn btn-primary" ng-model="checkModel.manualGather" btn-checkbox>Gathering</label>
 		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
@@ -34,9 +35,19 @@
 		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
 		        	<label class="btn btn-primary" ng-model="checkModel.right" btn-checkbox>Right</label>
 	    		</div>
+	    		-->
+	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Professions</button>
 	    		<button class="btn btn-default" ng-click="optionsCollapsed = !optionsCollapsed">Options</button>
                
-                <div collapse="optionsCollapsed">
+                
+	    	</div>
+    	</div>
+
+    	<div class="row">
+			<div class="col-md-12">
+    			<div collapse="optionsCollapsed">
+    				<hr>
+    				Options
                   	<div class="row">
 					  <div class="col-md-3">
 					    <div class="input-group">
@@ -48,13 +59,173 @@
 					        <button class="btn btn-default" type="button" ng-click="fpsPlus()">FPS + 1</button>
 					      </span>
 					    </div><!-- /input-group -->
-					  </div><!-- /.col-lg-6 -->
-					</div><!-- /.row -->
+					  </div><!-- /.col-md-3 -->
+					</div>
+					<hr>
                 </div>
-	    	</div>
-    	</div>
 
-    	<hr>
+                <div collapse="professionsCollapsed">
+    				<hr>
+    				<div class="row">
+					  <div class="col-md-12">
+					  <table class="table table-condensed table-bordered table-hover"> 
+					      <tr class="active">
+						    <td>
+						      <label>Idle workers: {{$root.jobs.unemployed}}</label>
+						    </td>
+						  </tr>
+						</table>
+					  </div>
+					</div>
+                  	<div class="row">
+					  <div class="col-md-6">
+					    <table class="table table-condensed table-bordered table-hover"> 
+					      <tr class="active">
+						    <td class="col-md-3">
+						      <label>Profession</label>
+						    </td>
+						    <td class="col-md-3">
+						      <label>Workers</label>
+						    </td>
+						    <td class="col-md-3">
+						      <label>Infrastructure for</label>
+						    </td>
+						    <td class="col-md-2">
+						      <label>Adjust</label>
+						    </td>
+						  </tr>
+						  <tr>
+						    <td class="col-md-3">
+						      Hunter
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunter}}
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunterMax}}
+						    </td>
+						    <td class="col-md-2">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+								</button>
+								&nbsp&nbsp
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
+								</button>
+						    </td>
+						  </tr>
+
+						  <tr>
+						    <td class="col-md-3">
+						      Hunter
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunter}}
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunterMax}}
+						    </td>
+						    <td class="col-md-2">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+								</button>
+								&nbsp&nbsp
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
+								</button>
+						    </td>
+						  </tr>
+
+						  <tr>
+						    <td class="col-md-3">
+						      Hunter
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunter}}
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunterMax}}
+						    </td>
+						    <td class="col-md-2">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+								</button>
+								&nbsp&nbsp
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
+								</button>
+						    </td>
+						  </tr>
+
+						  <tr>
+						    <td class="col-md-3">
+						      Hunter
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunter}}
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunterMax}}
+						    </td>
+						    <td class="col-md-2">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+								</button>
+								&nbsp&nbsp
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
+								</button>
+						    </td>
+						  </tr>
+
+						</table>
+					  </div><!-- /.col-md-6 -->
+
+
+					  <div class="col-md-6">
+					    <table class="table table-condensed table-bordered table-hover"> 
+					      <tr class="active">
+						    <td class="col-md-3">
+						      <label>Profession</label>
+						    </td>
+						    <td class="col-md-3">
+						      <label>Workers</label>
+						    </td>
+						    <td class="col-md-3">
+						      <label>Infrastructure for</label>
+						    </td>
+						    <td class="col-md-2">
+						      <label>Adjust</label>
+						    </td>
+						  </tr>
+						  <tr>
+						    <td class="col-md-3">
+						      Hunter
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunter}}
+						    </td>
+						    <td class="col-md-3">
+						      {{$root.jobs.hunterMax}}
+						    </td>
+						    <td class="col-md-2">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+								</button>
+								&nbsp&nbsp
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
+								</button>
+						    </td>
+						  </tr>
+						</table>
+					  </div><!-- /.col-md-6 -->
+					</div>
+					<hr>
+                </div>
+
+            </div>
+        </div>
 
 		<div collapse="isCollapsedGather">
 			<div class="row">

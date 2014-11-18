@@ -101,7 +101,24 @@ $scope.resetValues = function() {
 		  	"vendor": 0,
 		  	"teacher": 0,
 		  	"doctor": 0,
-		  	"cleric": 0
+		  	"cleric": 0,
+
+		  	"builderMax": 0,
+		  	"farmerMax": 0,
+		  	"gathererMax": 0,
+		  	"fishermanMax": 0,
+		  	"hunterMax": 0,
+		  	"woodcutterMax": 0,
+		  	"foresterMax": 0,
+		  	"minerMax": 0,
+		  	"stonecutterMax": 0,
+		  	"herbalistMax": 0,
+		  	"blacksmithMax": 0,
+		  	"tailorMax": 0,
+		  	"vendorMax": 0,
+		  	"teacherMax": 0,
+		  	"doctorMax": 0,
+		  	"clericMax": 0
 		};
 
 		$rootScope.buildings=
@@ -252,6 +269,7 @@ $scope.resetValues = function() {
 			var randomAge=Math.floor((Math.random() * 10) + 1) + 1;
 			var birthdayDay=Math.floor((Math.random() * 363) + 1);
 			var binGender=Math.floor((Math.random() * 2) + 1);
+			console.log(binGender);
 			if (binGender==1) var gender = 'male';
 			else var gender = 'female';
 			$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay});
