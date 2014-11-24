@@ -47,6 +47,7 @@ $scope.startNewGame = function() {
 		  	$scope.save($rootScope.children, "children");
 		  	$scope.save($rootScope.students, "students");
 		  	$scope.save($rootScope.defaultTemp, "defaultTemp");
+		  	$scope.save($rootScope.conditions, "conditions");
 		    $location.url('/game');
 
 		  }
@@ -130,6 +131,13 @@ $scope.resetValues = function() {
 
 		}
 
+		$rootScope.conditions=
+		{
+			"starving": 0,
+			"freezing": 0,
+			"sick": 0
+		}
+
 		$rootScope.adults=[];
 		$rootScope.students=[];
 		$rootScope.children=[];
@@ -164,6 +172,7 @@ $scope.resetValues = function() {
 			$rootScope.vars.adultsNum=8;
 			$rootScope.vars.studentsNum=0;
 			$rootScope.vars.childrenNum=8;
+			$rootScope.vars.population=16;
 			$rootScope.vars.food=1200;
 			$rootScope.vars.firewood=100;
 			$rootScope.vars.tools=20;
@@ -269,7 +278,7 @@ $scope.resetValues = function() {
 			var randomAge=Math.floor((Math.random() * 10) + 1) + 1;
 			var birthdayDay=Math.floor((Math.random() * 363) + 1);
 			var binGender=Math.floor((Math.random() * 2) + 1);
-			console.log(binGender);
+			//console.log(binGender);
 			if (binGender==1) var gender = 'male';
 			else var gender = 'female';
 			$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay});

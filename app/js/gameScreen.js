@@ -38,6 +38,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         $scope.load("children");
         $scope.load("students");
         $scope.load("defaultTemp");
+        $scope.load("conditions");
     };  
 
      $scope.saveAll = function() {
@@ -50,9 +51,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
       $scope.save($rootScope.children, "children");
       $scope.save($rootScope.students, "students");
       $scope.save($rootScope.defaultTemp, "defaultTemp");
+      $scope.save($rootScope.conditions, "conditions");
     };  
 
-    $scope.random = function(max, min) {
+    $scope.random = function(max, min) { //max is not inclusive
       return Math.floor(Math.random() * (max - min) + min);
     }
 
@@ -60,8 +62,68 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         $scope.isCollapsedGather = !$scope.checkModel.manualGather;
     };
 
+    $scope.kill = function(num) {
+      for(var i=0; i < num; i++) {
+        var type = $scope.random(4,1);
+        if ($rootScope.vars.population>0) {
+          $rootScope.vars.population--;
+          if (type == 1) {
+            if ($rootScope.vars.adultsNum>0) $rootScope.vars.adultsNum--;
+            else {
+              i--;
+              $rootScope.vars.population++;
+            }
+          }
+          else if (type == 2) {
+            if ($rootScope.vars.studentsNum>0) $rootScope.vars.studentsNum--;
+            else {
+              i--;
+              $rootScope.vars.population++;
+            }
+          }
+          else {
+            if ( $rootScope.vars.childrenNum>0) $rootScope.vars.childrenNum--;
+            else {
+              i--;
+              $rootScope.vars.population++;
+            }
+          }
+        }
+      }
+    }
+
     $scope.gather = function() {
         $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
+    }
+
+    $scope.eat = function() {
+        var foodNeed = Math.round(($rootScope.vars.population * 100)/52);
+        //console.log(foodNeed);
+        if (foodNeed <= $rootScope.vars.food) {
+          $rootScope.vars.food -= foodNeed;
+          $rootScope.conditions.starving = 0;
+        }
+        else if ($rootScope.conditions.starving > 0) {
+          var starvingNew = Math.round(((foodNeed - $rootScope.vars.food)*52)/100);
+          $rootScope.vars.food = 0;
+          if (starvingNew > $rootScope.conditions.starving) {
+            $scope.kill($rootScope.conditions.starving);
+            $rootScope.conditions.starving = starvingNew - $rootScope.conditions.starving;
+          }
+          else {
+            $scope.kill(starvingNew);
+            if ($rootScope.vars.population > $rootScope.conditions.starving) $rootScope.conditions.starving = starvingNew;
+            else $rootScope.conditions.starving = $rootScope.vars.population;
+          }
+        }
+        else {
+          $rootScope.conditions.starving = Math.round(((foodNeed - $rootScope.vars.food)*52)/100);
+          console.log($rootScope.conditions.starving);
+          $rootScope.vars.food = 0;
+
+        }
+        //$rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
+
     }
 
     $scope.calculateGather = function(people, base1year) {
@@ -96,12 +158,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
           if ($scope.date.week() != $scope.weekOld) {//new week
               $scope.weekOld=$scope.date.week();
+              $scope.eat();
               //console.log("week " + $scope.weekOld);
               $scope.saveAll();
           }
       }
       $scope.gather();
-      console.log($scope.date.hour());
+      //console.log($scope.date.hour());
       $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
     };
