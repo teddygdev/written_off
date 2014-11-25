@@ -42,12 +42,14 @@ $scope.startNewGame = function() {
 		  	$scope.save($rootScope.vars, "vars");
 		  	$scope.save($rootScope.varsConst, "varsConst");
 		  	$scope.save($rootScope.jobs, "jobs");
+		  	$scope.save($rootScope.jobsMax, "jobsMax");
 		  	$scope.save($rootScope.buildings, "buildings");
 		  	$scope.save($rootScope.adults, "adults");
 		  	$scope.save($rootScope.children, "children");
 		  	$scope.save($rootScope.students, "students");
 		  	$scope.save($rootScope.defaultTemp, "defaultTemp");
 		  	$scope.save($rootScope.conditions, "conditions");
+		  	$scope.save($rootScope.capacity, "capacity");
 		    $location.url('/game');
 
 		  }
@@ -102,9 +104,12 @@ $scope.resetValues = function() {
 		  	"vendor": 0,
 		  	"teacher": 0,
 		  	"doctor": 0,
-		  	"cleric": 0,
+		  	"cleric": 0		  	
+		};
 
-		  	"builderMax": 0,
+		$rootScope.jobsMax=
+		{
+			"builderMax": 0,
 		  	"farmerMax": 0,
 		  	"gathererMax": 0,
 		  	"fishermanMax": 0,
@@ -120,7 +125,7 @@ $scope.resetValues = function() {
 		  	"teacherMax": 0,
 		  	"doctorMax": 0,
 		  	"clericMax": 0
-		};
+		}
 
 		$rootScope.buildings=
 		{
@@ -128,7 +133,11 @@ $scope.resetValues = function() {
 			"barn": 0,
 			"storage": 0,
 			"school": 0
+		}
 
+		$rootScope.capacity=
+		{
+			"students": 0
 		}
 
 		$rootScope.conditions=
@@ -275,7 +284,7 @@ $scope.resetValues = function() {
 		}
 
 		for (var i=0; i < $rootScope.vars.childrenNum; i++) {
-			var randomAge=Math.floor((Math.random() * 10) + 1) + 1;
+			var randomAge=Math.floor((Math.random() * 6) + 1) + 1;
 			var birthdayDay=Math.floor((Math.random() * 363) + 1);
 			var binGender=Math.floor((Math.random() * 2) + 1);
 			//console.log(binGender);
