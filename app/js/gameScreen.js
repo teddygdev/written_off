@@ -67,10 +67,20 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     };
 
     $scope.kill = function(num, death, type, index) {
+      //console.log("killing:" + num);
+      if (num>$rootScope.vars.population) num = $rootScope.vars.population;
+      //console.log("killing adjusted:" + num);
+      if (type == undefined) var specified=false;
       for(var i=0; i < num; i++) {
-        if (type == undefined) var type = $scope.random(4,1);
+        //console.log("loop" + i);
+        //console.log(type);
+        if (specified==false) var type = $scope.random(4,1);
+        //console.log("decided type" + type);
         if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
         if ((type == 2)&&($rootScope.vars.studentsNum<1)) type=3;
+        if ((type == 3)&&($rootScope.vars.childrenNum<1)) type=1;
+        if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
+        //console.log("adjusted type" + type);
 
         if ($rootScope.vars.population>0) {
           $rootScope.vars.population--;
@@ -79,24 +89,22 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
               $rootScope.vars.adultsNum--;
               var toDie = $scope.random($rootScope.adults.length, 0);
               if (index != undefined) toDie=index;
-                 ///fix type of death
-              
-              //if ($rootscope.jobs.unemployed > 0) $rootscope.jobs.unemployed--;
-              //else {
-              //}
+             
+
               var cnt=0;
-              for (var i in $rootScope.jobs) {
-                if ($rootScope.jobs[i] > 0) {
+              for (var j in $rootScope.jobs) {
+                if ($rootScope.jobs[j] > 0) {
                   cnt++;
                 }
               }
+              
               var stop = $scope.random(cnt, 0);
               var cnt2 = 0;
-              for (var i in $rootScope.jobs) {
-                if ($rootScope.jobs[i] > 0) {
+              for (var j in $rootScope.jobs) {
+                if ($rootScope.jobs[j] > 0) {
                   if (cnt2==stop) {
-                    $rootScope.jobs[i]--;
-                    console.log($rootScope.adults[toDie].name + ' the ' + i + death + ' at age ' + $rootScope.adults[toDie].age);
+                    $rootScope.jobs[j]--;
+                    console.log($rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age);
                   }
                   cnt2++;
                 }
@@ -123,7 +131,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
           else {
             if ($rootScope.vars.childrenNum>0) {
               $rootScope.vars.childrenNum--;
-              var toDie = $scope.random($rootScope.adults.length, 0);
+              var toDie = $scope.random($rootScope.children.length, 0);
               console.log($rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age);
               $rootScope.children.splice(toDie, 1);
             }
@@ -138,15 +146,18 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     $scope.ageOneDay = function() {
       //console.log($rootScope.adults[0].birthday);
+      var todayRandom=$scope.random(20000, 1);
       for (var i = 0; i < $rootScope.adults.length; i++) {
         $rootScope.adults[i].birthday++;
         if ($rootScope.adults[i].birthday > 365) {
           $rootScope.adults[i].birthday=1;
           $rootScope.adults[i].age++;
-          if ($rootScope.adults[i].age>20) {
-            $scope.kill(1, ' died from old age', 1, i);
+          if ($rootScope.adults[i].age>50) {
+            if (todayRandom<2000) $scope.kill(1, ' died from old age', 1, i);
           }
-
+        }
+        else if (todayRandom==1) {
+            $scope.kill(1, ' died from random event', 1, i); //put in array of random events
         }
       }
       for (var i = 0; i < $rootScope.students.length; i++) {
@@ -159,6 +170,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
               'birthday':$rootScope.students[i].birthday, 'job':'none'});
             $rootScope.jobs.unemployed++;
             $rootScope.students.splice(i, 1);
+          }
+          else if (todayRandom==2) {
+            $scope.kill(1, ' died from random event', 2, i); //put in array of random events
           } 
         }
       }
@@ -168,7 +182,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
           $rootScope.children[i].birthday=1;
           $rootScope.children[i].age++;
           if ($rootScope.children[i].age > 10) {
-            if ($rootscope.capacity.students < $rootscope.vars.studentsNum) {
+            if ($rootScope.capacity.students < $rootScope.vars.studentsNum) {
               $rootScope.students.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
                 'birthday':$rootScope.children[i].birthday, 'job':'none'});
               $rootScope.children.splice(i, 1);
@@ -180,6 +194,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
               $rootScope.jobs.unemployed++;
             }
           } 
+        }
+        else if (todayRandom==3) {
+            $scope.kill(1, ' died from random event', 3, i); //put in array of random events
         }
       }
        
@@ -221,6 +238,52 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     }
 
+    $scope.houseHeating = function() {
+      //$rootScope.buildings.house=10;
+      //$rootScope.vars.haveRoof = $rootScope.vars.population;
+      if ($rootScope.buildings.house == 0) {
+        if (($scope.date.month() < 9)&&($scope.date.year()==1)) {
+          //console.log("gratis");
+        }
+        else {
+          $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from frostbite due to lack of housing '); 
+        }
+
+
+      }
+      else {
+        $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from frostbite due to lack of housing '); 
+        var woodNeed = Math.round(($rootScope.vars.haveRoof / $rootScope.capacity.house) * $rootScope.capacity.heatEf);
+          //console.log(foodNeed);
+          if (woodNeed <= $rootScope.vars.firewood) {
+            $rootScope.vars.firewood -= woodNeed;
+            $rootScope.conditions.freezing = 0;
+          }
+          else if ($rootScope.conditions.freezing > 0) {
+            var freezingNew = Math.round((woodNeed - $rootScope.vars.firewood)/($rootScope.capacity.heatEf));
+            $rootScope.vars.firewood = 0;
+            if (freezingNew > $rootScope.conditions.freezing) {
+              //console.log($rootScope.conditions.freezing);
+              //console.log("going to kill:" + $rootScope.conditions.freezing * $rootScope.capacity.house);
+              $scope.kill($rootScope.conditions.freezing * $rootScope.capacity.house, ' died from frostbite');
+              $rootScope.conditions.freezing = freezingNew - $rootScope.conditions.freezing;
+            }
+            else {
+              //console.log("going to kill:" +freezingNew);
+              $scope.kill(freezingNew * $rootScope.capacity.house, ' died from frostbite');
+              if ($rootScope.vars.population > $rootScope.conditions.freezing) $rootScope.conditions.freezing = freezingNew;
+              else $rootScope.conditions.freezing = $rootScope.vars.population;
+            }
+          }
+          else {
+            $rootScope.conditions.freezing = Math.round((woodNeed - $rootScope.vars.firewood)/($rootScope.capacity.heatEf));
+            //console.log($rootScope.conditions.freezing);
+            $rootScope.vars.firewood = 0;
+
+          }
+        }
+    }
+
     $scope.calculateGather = function(people, base1year) {
         return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040); //35040 - 15 minute intervals in a year
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
@@ -255,6 +318,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
           if ($scope.date.week() != $scope.weekOld) {//new week
               $scope.weekOld=$scope.date.week();
               $scope.eat();
+              if ($rootScope.vars.todayWeather < 10) $scope.houseHeating();
               //console.log("week " + $scope.weekOld);
               $scope.saveAll();
           }

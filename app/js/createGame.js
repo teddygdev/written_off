@@ -83,6 +83,7 @@ $scope.resetValues = function() {
 		  "adultsNum": 0,
 		  "studentsNum": 0,
 		  "childrenNum": 0,
+		  "haveRoof": 0,
 		  "todayWeather": 20
 		};
 
@@ -137,7 +138,9 @@ $scope.resetValues = function() {
 
 		$rootScope.capacity=
 		{
-			"students": 0
+			"students": 0,
+			"house": 3,
+			"heatEf": 1.5       //wood usage per week
 		}
 
 		$rootScope.conditions=
@@ -190,8 +193,8 @@ $scope.resetValues = function() {
 
 		//http://www.usclimatedata.com/
 		//if t<10 -> use firewood
-		//if t<0  -> use 2xfirewood
-		//if t<-10-> use 3xfirewood
+		//if t<0  -> use 1.5xfirewood
+		//if t<-10-> use 2xfirewood
 
 		//if no coat
 		//if >20 no coat needed
