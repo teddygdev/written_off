@@ -397,7 +397,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     $scope.doCollapse();
     $scope.optionsCollapsed = true;
-    $scope.professionsCollapsed = false;
+    $scope.professionsCollapsed = true;
     $scope.fps=10;
 
     
