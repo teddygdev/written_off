@@ -206,6 +206,33 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     $scope.gather = function() {
         $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
+        $rootScope.vars.logs += $scope.calculateGather($rootScope.jobs.forester, 400);
+        $scope.calculateProduction($rootScope.jobs.woodcutter, 'firewood', 400, 'logs', 100);
+    }
+
+    $scope.calculateGather = function(people, base1year) {
+        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040); //35040 - 15 minute intervals in a year
+        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
+        //goes off ~ 100 times (24*4)
+    }
+
+    $scope.calculateProduction = function(people, base, base1year, mat, mat1year) {
+        var needed1 = ($scope.timeStep/100)*$rootScope.multiplier*1*(mat1year/35040); //35040 - 15 minute intervals in a year
+        var max = 0;
+        //console.log($rootScope.vars[mat]);
+        for (var i=1; i<=people+1; i++) {
+          if (needed1*i > $rootScope.vars[mat]) {
+            max = i-1;
+            console.log(max);
+            break;
+          }
+          else max = people;
+        }
+        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040);
+        $rootScope.vars[mat] -= needed1 * max;
+        $rootScope.vars[base] += created;
+        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
+        //goes off ~ 100 times (24*4)
     }
 
     $scope.eat = function() {
@@ -284,11 +311,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         }
     }
 
-    $scope.calculateGather = function(people, base1year) {
-        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040); //35040 - 15 minute intervals in a year
-        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
-        //goes off ~ 100 times (24*4)
-    }
+    
 
     $scope.gameLoopTick = function() {
       if ($scope.date.dayOfYear() != $scope.dayOld) { //new day
