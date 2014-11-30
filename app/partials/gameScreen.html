@@ -63,7 +63,7 @@
 					  <div class="col-md-12">
 					    <table class="table table-condensed table-bordered table-hover"> 
 					      <tr class="active">
-						    <td class="col-md-4">
+						    <td class="col-md-3">
 						      <label>Building</label>
 						    </td>
 						    <td class="col-md-1">
@@ -78,15 +78,18 @@
 						    <td class="col-md-1">
 						      <label>Iron</label>
 						    </td>
-						    <td class="col-md-2">
+						    <td class="col-md-1">
 						      <label>Type</label>
+						    </td>
+						    <td class="col-md-1">
+						      <label>Capacity</label>
 						    </td>
 						    <td class="col-md-2">
 						      <label>Resources</label>
 						    </td>
 						  </tr>
 						  <tr>
-						    <td class="col-md-4">
+						    <td class="col-md-3">
 						      House
 						    </td>
 						    <td class="col-md-1">
@@ -101,12 +104,15 @@
 						    <td class="col-md-1">
 						      {{$root.buildings.house.iron}}
 						    </td>
-						    <td class="col-md-2">
+						    <td class="col-md-1">
 						      {{$root.buildings.house.type}}
+						    </td>
+						    <td class="col-md-1">
+						      {{$root.capacity.house}}
 						    </td>
 						    <td class="col-md-2">
 						      	<div ng-switch="$root.buildings.house.logs<=$root.vars.logs&&$root.buildings.house.stone<=$root.vars.stone&&$root.buildings.house.iron<=$root.vars.iron">
-								  <button type="button" class="btn btn-primary btn-block" ng-switch-when="true" ng-click="build('house')">Build</button>
+								  <button type="button" class="btn btn-primary btn-block btn-sm" ng-switch-when="true" ng-click="build('house')"><strong>Build</strong></button>
 								  <span ng-switch-when="false">
 								  	<progressbar max="maxBar" value="valBar" type="primary"></progressbar>
 								  </span>

@@ -66,83 +66,95 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         $scope.isCollapsedGather = !$scope.checkModel.manualGather;
     };
 
+    $scope.resetJobs = function() {
+        for (var i in $rootScope.jobs) {
+               $rootScope.jobs[i] = 0;
+        }
+        $rootScope.jobs.unemployed = $rootScope.vars.adultsNum;
+    }
+
     $scope.kill = function(num, death, type, index) {
       //console.log("killing:" + num);
       if (num>$rootScope.vars.population) num = $rootScope.vars.population;
       //console.log("killing adjusted:" + num);
       if (type == undefined) var specified=false;
-      for(var i=0; i < num; i++) {
-        //console.log("loop" + i);
-        //console.log(type);
-        if (specified==false) var type = $scope.random(4,1);
-        //console.log("decided type" + type);
-        if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
-        if ((type == 2)&&($rootScope.vars.studentsNum<1)) type=3;
-        if ((type == 3)&&($rootScope.vars.childrenNum<1)) type=1;
-        if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
-        //console.log("adjusted type" + type);
+      try {
+        for(var i=0; i < num; i++) {
+          //console.log("loop" + i);
+          //console.log(type);
+          if (specified==false) var type = $scope.random(4,1);
+          //console.log("decided type" + type);
+          if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
+          if ((type == 2)&&($rootScope.vars.studentsNum<1)) type=3;
+          if ((type == 3)&&($rootScope.vars.childrenNum<1)) type=1;
+          if ((type == 1)&&($rootScope.vars.adultsNum<1)) type=2;
+          //console.log("adjusted type" + type);
 
-        if ($rootScope.vars.population>0) {
-          $rootScope.vars.population--;
-          if (type == 1) {
-            if ($rootScope.vars.adultsNum>0) {
-              $rootScope.vars.adultsNum--;
-              var toDie = $scope.random($rootScope.adults.length, 0);
-              if (index != undefined) toDie=index;
-             
+          if ($rootScope.vars.population>0) {
+            $rootScope.vars.population--;
+            if (type == 1) {
+              if ($rootScope.vars.adultsNum>0) {
+                $rootScope.vars.adultsNum--;
+                var toDie = $scope.random($rootScope.adults.length, 0);
+                if (index != undefined) toDie=index;
+               
 
-              var cnt=0;
-              for (var j in $rootScope.jobs) {
-                if ($rootScope.jobs[j] > 0) {
-                  cnt++;
-                }
-              }
-              
-              var stop = $scope.random(cnt, 0);
-              var cnt2 = 0;
-              for (var j in $rootScope.jobs) {
-                if ($rootScope.jobs[j] > 0) {
-                  if (cnt2==stop) {
-                    $rootScope.jobs[j]--;
-                    console.log($rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age);
+                var cnt=0;
+                for (var j in $rootScope.jobs) {
+                  if ($rootScope.jobs[j] > 0) {
+                    cnt++;
                   }
-                  cnt2++;
                 }
+                
+                var stop = $scope.random(cnt, 0);
+                var cnt2 = 0;
+                for (var j in $rootScope.jobs) {
+                  if ($rootScope.jobs[j] > 0) {
+                    if (cnt2==stop) {
+                      $rootScope.jobs[j]--;
+                      console.log($rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age);
+                    }
+                    cnt2++;
+                  }
+                }
+                $rootScope.adults.splice(toDie, 1);
               }
-              $rootScope.adults.splice(toDie, 1);
+              else {
+                i--;
+                $rootScope.vars.population++;
+              }
+            }
+            else if (type == 2) {
+              if ($rootScope.vars.studentsNum>0) {
+                $rootScope.vars.studentsNum--;
+                var toDie = $scope.random($rootScope.students.length, 0);
+                if (death==' died from old age') death = ' died from a disease';
+                console.log($rootScope.students[toDie].name + ' the student'+ death + ' at age ' + $rootScope.students[toDie].age);
+                $rootScope.students.splice(toDie, 1);
+              }
+              else {
+                i--;
+                $rootScope.vars.population++;
+              }
             }
             else {
-              i--;
-              $rootScope.vars.population++;
-            }
-          }
-          else if (type == 2) {
-            if ($rootScope.vars.studentsNum>0) {
-              $rootScope.vars.studentsNum--;
-              var toDie = $scope.random($rootScope.students.length, 0);
-              if (death==' died from old age') death = ' died from a disease';
-              console.log($rootScope.students[toDie].name + ' the student'+ death + ' at age ' + $rootScope.students[toDie].age);
-              $rootScope.students.splice(toDie, 1);
-            }
-            else {
-              i--;
-              $rootScope.vars.population++;
-            }
-          }
-          else {
-            if ($rootScope.vars.childrenNum>0) {
-              $rootScope.vars.childrenNum--;
-              var toDie = $scope.random($rootScope.children.length, 0);
-              if (death==' died from old age') death = ' died from a disease';
-              console.log($rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age);
-              $rootScope.children.splice(toDie, 1);
-            }
-            else {
-              i--;
-              $rootScope.vars.population++;
+              if ($rootScope.vars.childrenNum>0) {
+                $rootScope.vars.childrenNum--;
+                var toDie = $scope.random($rootScope.children.length, 0);
+                if (death==' died from old age') death = ' died from a disease';
+                console.log($rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age);
+                $rootScope.children.splice(toDie, 1);
+              }
+              else {
+                i--;
+                $rootScope.vars.population++;
+              }
             }
           }
         }
+      }
+      catch(err) {
+        console.log("Something went wrong with a person dying... Yay?  Error: " + err);
       }
     }
 
@@ -155,11 +167,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $rootScope.adults[i].birthday=1;
           $rootScope.adults[i].age++;
           if ($rootScope.adults[i].age>50) {
-            if (todayRandom<2000) $scope.kill(1, ' died from old age', 1, i);
+            if (todayRandom<750) $scope.kill(1, ' died from old age', 1, i);
           }
         }
-        else if (todayRandom==1) {
+        else if (todayRandom==1000) {
             $scope.kill(1, ' died from random event', 1, i); //put in array of random events
+            todayRandom=10000;
         }
       }
       for (var i = 0; i < $rootScope.students.length; i++) {
@@ -175,8 +188,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             $rootScope.vars.adultsNum++;
             $rootScope.students.splice(i, 1);
           }
-          else if (todayRandom==2) {
+          else if (todayRandom==2000) {
             $scope.kill(1, ' died from random event', 2, i); //put in array of random events
+            todayRandom=10000;
           } 
         }
       }
@@ -203,8 +217,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             }
           } 
         }
-        else if (todayRandom==3) {
+        else if (todayRandom==3000) {
             $scope.kill(1, ' died from random event', 3, i); //put in array of random events
+            todayRandom=10000;
         }
       }
       for (var i = 0; i < $scope.babies.length; i++) {
