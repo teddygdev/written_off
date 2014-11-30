@@ -17,14 +17,14 @@
 			  	<div class="col-md-2">Weather: {{$root.vars.todayWeather}}&deg C </span></div>
 			</div>
 			<div class="row">
-				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue" class="animate">{{item.name}} </span></div>
+				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue" class="animate" ng-class="{'label label-success':$first}">&nbsp{{item.name}}</span></div>
 			</div>
 		</div>
 
 		
 		<div class="row">
 			<div class="col-md-12">
-	    		<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active">Building</progressbar>
+	    		<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active"><strong>Building Progress: {{(buildBarVal * 100 / buildBarMax) | number: 0}}%</strong></progressbar>
 	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Professions</button>
 	    		<button class="btn btn-default" ng-click="buildingsCollapsed = !buildingsCollapsed">Buildings</button>
 	    		<button class="btn btn-default" ng-click="optionsCollapsed = !optionsCollapsed">Options</button>
@@ -129,6 +129,12 @@
 					      <tr class="active">
 						    <td>
 						      <label>Idle workers: {{$root.jobs.unemployed}}</label>
+						    </td>
+						    <td>
+						      <label>Total workers: {{$root.vars.adultsNum}}</label>
+						    </td>
+						    <td>
+						      <button type="button" class="btn btn-default btn-sm" ng-click="resetJobs()">Reset Jobs</button>
 						    </td>
 						  </tr>
 						</table>
