@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('writtenOffApp.gameScreen', ['ngRoute'])
+angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
 
 
@@ -207,6 +207,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.gather = function() {
         $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
         $rootScope.vars.logs += $scope.calculateGather($rootScope.jobs.forester, 400);
+        $rootScope.vars.stone += $scope.calculateGather($rootScope.jobs.stonecutter, 400);
         $scope.calculateProduction($rootScope.jobs.woodcutter, 'firewood', 400, 'logs', 100);
     }
 
@@ -223,7 +224,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
         for (var i=1; i<=people+1; i++) {
           if (needed1*i > $rootScope.vars[mat]) {
             max = i-1;
-            console.log(max);
+            //console.log(max);
             break;
           }
           else max = people;
@@ -268,7 +269,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
     $scope.houseHeating = function() {
       //$rootScope.buildings.house=10;
       //$rootScope.vars.haveRoof = $rootScope.vars.population;
-      if ($rootScope.buildings.house == 0) {
+      if (($scope.date.month() < 9)&&($scope.date.year()==1)) {
         if (($scope.date.month() < 9)&&($scope.date.year()==1)) {
           //console.log("gratis");
         }
@@ -347,10 +348,60 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
           }
       }
       $scope.gather();
+      $scope.maxBarCalc('house');
+      $scope.buildProcess();
       //console.log($scope.date.hour());
       $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
       $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
     };
+
+    $scope.maxBarCalc = function(name) {
+      $scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
+      var logs = $rootScope.vars.logs;
+      if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
+      var stone = $rootScope.vars.stone;
+      if (stone > $rootScope.buildings[name]['stone']) stone = $rootScope.buildings[name]['stone'];
+      var iron = $rootScope.vars.iron; 
+      if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
+      $scope.valBar= logs + stone + iron;
+    }
+
+    $scope.build = function(name) {
+      //$scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
+      //var logs = $rootScope.vars.logs;
+      //if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
+      //var stone = $rootScope.vars.stone;
+      //if (stone > $rootScope.buildings[name]['stone']) stone = $rootScope.buildings[name]['stone'];
+      //var iron = $rootScope.vars.iron; 
+      //if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
+      //$scope.valBar= logs + stone + iron;
+      $rootScope.vars.logs -= $rootScope.buildings[name]['logs'];
+      $rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
+      $rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
+      //$rootScope.buildings[bname]['have']++;
+      $scope.queue.push({"name":name});
+    }
+
+    $scope.buildProcess = function() {
+      var power = $scope.calculateGather($rootScope.jobs.builder, 365);
+      if ($scope.queue.length>0) {
+        var name = $scope.queue[0]['name'];
+        $scope.buildBarMax = $rootScope.buildings[name]['logs'] + $rootScope.buildings[name]['stone'] + $rootScope.buildings[name]['iron'];
+        console.log($scope.buildBarMax);
+        $scope.buildBarVal += power;
+        if ($scope.buildBarVal>=$scope.buildBarMax) {
+          $scope.buildBarMax=100;
+          $scope.buildBarVal=0;
+          $rootScope.buildings[name]['have']++;
+          $scope.queue.shift();
+        }
+      }
+      else {
+        $scope.buildBarMax=100;
+        $scope.buildBarVal=0;
+      }
+    }
+
     
     $scope.clickFood = function() {
     	var random = Math.floor((Math.random() * 100) + 1);
@@ -420,8 +471,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute'])
 
     $scope.doCollapse();
     $scope.optionsCollapsed = true;
+    $scope.buildingsCollapsed = false;
     $scope.professionsCollapsed = true;
     $scope.fps=10;
+
+    $scope.queue = [];
+    $scope.buildBarMax=100;
+    $scope.buildBarVal=0;
 
     
     //console.log($rootScope.adults);

@@ -130,7 +130,8 @@ $scope.resetValues = function() {
 
 		$rootScope.buildings=
 		{
-			"house": 0,
+			"house": {"have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Shelter"},
+
 			"barn": 0,
 			"storage": 0,
 			"school": 0

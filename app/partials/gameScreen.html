@@ -1,47 +1,38 @@
 <div class="container">
+	<progressbar max="maxBar" value="valBar" type="primary">Current Age</progressbar>
 		<div class="panel panel-primary">
 			<div class="row">
 			  	<div class="col-md-2">Food: {{$root.vars.food | number: 0}}</div>
 			  	<div class="col-md-2">Logs: {{$root.vars.logs  | number: 0}}</div>
-			  	<div class="col-md-2">Stone: {{$root.vars.stone}}</div>
-			  	<div class="col-md-2">Iron: {{$root.vars.iron}}</div>
+			  	<div class="col-md-2">Stone: {{$root.vars.stone | number: 0}}</div>
+			  	<div class="col-md-2">Iron: {{$root.vars.iron | number: 0}}</div>
 			  	<div class="col-md-2" popover="Adults / Students / Children / Total" popover-trigger="mouseenter"><span class="glyphicon glyphicon-user" aria-hidden="true">{{$root.vars.adultsNum}}/{{$root.vars.studentsNum}}/{{$root.vars.childrenNum}}/<b>{{$root.vars.population}}</b></span></div>
 			  	<div class="col-md-2">{{datePretty}}</div>
 			</div>
 			<div class="row">
 			  	<div class="col-md-2 col-md-offset-1">Firewood: {{$root.vars.firewood  | number: 0}}</div>
-			  	<div class="col-md-2">Tools: {{$root.vars.tools}}</div>
-			  	<div class="col-md-2">Coats: {{$root.vars.coats}}</div>
-			  	<div class="col-md-2">Herbs: {{$root.vars.herbs}}</div>
+			  	<div class="col-md-2">Tools: {{$root.vars.tools | number: 0}}</div>
+			  	<div class="col-md-2">Coats: {{$root.vars.coats | number: 0}}</div>
+			  	<div class="col-md-2">Herbs: {{$root.vars.herbs | number: 0}}</div>
 			  	<div class="col-md-2">Weather: {{$root.vars.todayWeather}}&deg C </span></div>
 			</div>
+			<div class="row">
+				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue" class="animate">{{item.name}} </span></div>
+			</div>
 		</div>
+
 		
 		<div class="row">
 			<div class="col-md-12">
-				<!--
-				<div class="btn-group" ng-click="doCollapse()">
-		        	<label class="btn btn-primary" ng-model="checkModel.manualGather" btn-checkbox>Gathering</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Middle</label>
-		        	<label class="btn btn-primary" ng-model="checkModel.right" btn-checkbox>Right</label>
-	    		</div>
-	    		-->
+	    		<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active">Building</progressbar>
 	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Professions</button>
+	    		<button class="btn btn-default" ng-click="buildingsCollapsed = !buildingsCollapsed">Buildings</button>
 	    		<button class="btn btn-default" ng-click="optionsCollapsed = !optionsCollapsed">Options</button>
                
                 
 	    	</div>
     	</div>
+    	
 
     	<div class="row">
 			<div class="col-md-12">
@@ -60,6 +51,72 @@
 					      </span>
 					    </div><!-- /input-group -->
 					  </div><!-- /.col-md-3 -->
+					</div>
+					<hr>
+                </div>
+
+                <div collapse="buildingsCollapsed">
+    				<hr>
+    				<div class="row">
+					</div>
+                  	<div class="row">
+					  <div class="col-md-12">
+					    <table class="table table-condensed table-bordered table-hover"> 
+					      <tr class="active">
+						    <td class="col-md-4">
+						      <label>Building</label>
+						    </td>
+						    <td class="col-md-1">
+						      <label>Have</label>
+						    </td>
+						    <td class="col-md-1">
+						      <label>Logs</label>
+						    </td>
+						    <td class="col-md-1">
+						      <label>Stone</label>
+						    </td>
+						    <td class="col-md-1">
+						      <label>Iron</label>
+						    </td>
+						    <td class="col-md-2">
+						      <label>Type</label>
+						    </td>
+						    <td class="col-md-2">
+						      <label>Resources</label>
+						    </td>
+						  </tr>
+						  <tr>
+						    <td class="col-md-4">
+						      House
+						    </td>
+						    <td class="col-md-1">
+						      {{$root.buildings.house.have}}
+						    </td>
+						    <td class="col-md-1">
+						      {{$root.buildings.house.logs}}
+						    </td>
+						    <td class="col-md-1">
+						      {{$root.buildings.house.stone}}
+						    </td>
+						    <td class="col-md-1">
+						      {{$root.buildings.house.iron}}
+						    </td>
+						    <td class="col-md-2">
+						      {{$root.buildings.house.type}}
+						    </td>
+						    <td class="col-md-2">
+						      	<div ng-switch="$root.buildings.house.logs<=$root.vars.logs&&$root.buildings.house.stone<=$root.vars.stone&&$root.buildings.house.iron<=$root.vars.iron">
+								  <button type="button" class="btn btn-primary btn-block" ng-switch-when="true" ng-click="build('house')">Build</button>
+								  <span ng-switch-when="false">
+								  	<progressbar max="maxBar" value="valBar" type="primary"></progressbar>
+								  </span>
+								</div>
+						    </td>
+						  </tr>
+
+						</table>
+					  </div><!-- /.col-md-6 -->
+					  
 					</div>
 					<hr>
                 </div>
@@ -138,20 +195,20 @@
 
 						  <tr>
 						    <td class="col-md-3">
-						      Hunter
+						      Stonecutter
 						    </td>
 						    <td class="col-md-3">
-						      {{$root.jobs.hunter}}
+						      {{$root.jobs.stonecutter}}
 						    </td>
 						    <td class="col-md-3">
-						      {{$root.jobs.hunterMax}}
+						      {{$root.jobsMax.stonecutterMax}}
 						    </td>
 						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'stonecutter')">
 								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
 								</button>
 								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'stonecutter')">
 								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
 								</button>
 						    </td>
@@ -226,14 +283,14 @@
 						      {{$root.jobs.builder}}
 						    </td>
 						    <td class="col-md-3">
-						      {{$root.jobsMax.builder}}
+						      {{$root.jobsMax.builderMax}}
 						    </td>
 						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'woodcutter')">
+						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'builder')">
 								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
 								</button>
 								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'woodcutter')">
+								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'builder')">
 								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
 								</button>
 						    </td>
