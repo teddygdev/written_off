@@ -47,6 +47,8 @@ $scope.startNewGame = function() {
 		  	$scope.save($rootScope.adults, "adults");
 		  	$scope.save($rootScope.children, "children");
 		  	$scope.save($rootScope.students, "students");
+		  	$scope.save($rootScope.babies, "babies");
+		  	$scope.save($rootScope.queue, "queue");
 		  	$scope.save($rootScope.defaultTemp, "defaultTemp");
 		  	$scope.save($rootScope.conditions, "conditions");
 		  	$scope.save($rootScope.capacity, "capacity");
@@ -153,7 +155,9 @@ $scope.resetValues = function() {
 
 		$rootScope.adults=[];
 		$rootScope.students=[];
-		$rootScope.children=[];
+		$rootScope.children=[];		
+    	$rootScope.babies= [];  //make rootscope
+    	$rootScope.queue = [];  //make rootscope
 
 		if ($scope.radioDifficulty=='Easy') {
 			$rootScope.vars.adultsNum=12;

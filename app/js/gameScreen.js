@@ -38,6 +38,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         $scope.load("adults");
         $scope.load("children");
         $scope.load("students");
+        $scope.load("babies");
+        $scope.load("queue");
         $scope.load("defaultTemp");
         $scope.load("conditions");
         $scope.load("capacity");
@@ -53,6 +55,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $scope.save($rootScope.adults, "adults");
       $scope.save($rootScope.children, "children");
       $scope.save($rootScope.students, "students");
+      $scope.save($rootScope.babies, "babies");
+      $scope.save($rootScope.queue, "queue");
       $scope.save($rootScope.defaultTemp, "defaultTemp");
       $scope.save($rootScope.conditions, "conditions");
       $scope.save($rootScope.capacity, "capacity");
@@ -222,15 +226,15 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             todayRandom=10000;
         }
       }
-      for (var i = 0; i < $scope.babies.length; i++) {
-        $scope.babies[i].birthday++;
-        if ($scope.babies[i].birthday == 0) {
+      for (var i = 0; i < $rootScope.babies.length; i++) {
+        $rootScope.babies[i].birthday++;
+        if ($rootScope.babies[i].birthday == 0) {
           var birthday=$scope.date.dayOfYear();
           var binGender=Math.floor((Math.random() * 2) + 1);
           if (binGender==1) var gender = 'male';
           else var gender = 'female';
           $rootScope.children.push({'name':faker.name.firstName(), 'age':0, 'gender':gender, 'birthday':birthday});
-          $scope.babies.splice(i, 1);
+          $rootScope.babies.splice(i, 1);
           $rootScope.vars.population++;
           $rootScope.vars.childrenNum++;
            
@@ -437,24 +441,24 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //console.log(capacity);
       if (capacity>=posBabies) var makeBabies=posBabies;
       else var makeBabies=capacity;
-      if ($scope.babies.length >= posBabies) {
+      if ($rootScope.babies.length >= posBabies) {
         makeBabies=0;
       }
       
       
       //if (capacity<1) {
-      if ($scope.babies.length>capacity) {
-        for (var i=0; i<$scope.babies.length-capacity; i++)
-          $scope.babies.pop();
+      if ($rootScope.babies.length>capacity) {
+        for (var i=0; i<$rootScope.babies.length-capacity; i++)
+          $rootScope.babies.pop();
       }
       else {
         for (var i=0; i<makeBabies; i++) {
           var birthdayDay=$scope.random(300,240);
           birthdayDay = birthdayDay * (-1);
-          $scope.babies.push({'birthday':birthdayDay});
+          $rootScope.babies.push({'birthday':birthdayDay});
         }
       }
-      //console.log('length' + $scope.babies.length);
+      //console.log('length' + $rootScope.babies.length);
     }
 
     $scope.build = function(name) {
@@ -470,20 +474,20 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
       $rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
       //$rootScope.buildings[bname]['have']++;
-      $scope.queue.push({"name":name});
+      $rootScope.queue.push({"name":name});
     }
 
     $scope.buildProcess = function() {
       var power = $scope.calculateGather($rootScope.jobs.builder, 365);
-      if ($scope.queue.length>0) {
-        var name = $scope.queue[0]['name'];
+      if ($rootScope.queue.length>0) {
+        var name = $rootScope.queue[0]['name'];
         $scope.buildBarMax = ($rootScope.buildings[name]['logs'] + $rootScope.buildings[name]['stone'] + $rootScope.buildings[name]['iron']) * 2;
         $scope.buildBarVal += power;
         if ($scope.buildBarVal>=$scope.buildBarMax) {
           $scope.buildBarMax=100;
           $scope.buildBarVal=0;
           $rootScope.buildings[name]['have']++;
-          $scope.queue.shift();
+          $rootScope.queue.shift();
         }
       }
       else {
@@ -565,11 +569,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     $scope.professionsCollapsed = true;
     $scope.fps=10;
 
-    $scope.queue = [];  //make rootscope
+   
     $scope.buildBarMax=100;
     $scope.buildBarVal=0;
 
-    $scope.babies= [];  //make rootscope
 
     
     //console.log($rootScope.adults);
