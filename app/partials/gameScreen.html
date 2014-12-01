@@ -1,6 +1,8 @@
 <div class="container">
-	<progressbar max="maxBar" value="valBar" type="primary">Current Age</progressbar>
-		<div class="panel panel-primary">
+	<div class="panel panel-default" style="height: 20px">
+		<progressbar max="maxBar" value="valBar" type="primary"><strong class="strokeme">Tool&nbspAge</strong></progressbar>
+	</div>
+		<div class="panel panel-default">
 			<div class="row">
 			  	<div class="col-md-2">Food: {{$root.vars.food | number: 0}}</div>
 			  	<div class="col-md-2">Logs: {{$root.vars.logs  | number: 0}}</div>
@@ -16,6 +18,7 @@
 			  	<div class="col-md-2">Herbs: {{$root.vars.herbs | number: 0}}</div>
 			  	<div class="col-md-2">Weather: {{$root.vars.todayWeather}}&deg C </span></div>
 			</div>
+
 			<div class="row">
 				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue" class="animate" ng-class="{'label label-success':$first}">&nbsp{{item.name}}</span></div>
 			</div>
@@ -24,293 +27,566 @@
 		
 		<div class="row">
 			<div class="col-md-12">
-	    		<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active"><strong>Building Progress: {{(buildBarVal * 100 / buildBarMax) | number: 0}}%</strong></progressbar>
-	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Professions</button>
+				<div class="panel panel-default" style="height: 20px">
+	    			<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active"><strong  class="strokeme">Building&nbspProgress:&nbsp{{(buildBarVal * 100 / buildBarMax) | number: 0}}%</strong></progressbar>
+	    		</div>
+	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Jobs</button>
 	    		<button class="btn btn-default" ng-click="buildingsCollapsed = !buildingsCollapsed">Buildings</button>
 	    		<button class="btn btn-default" ng-click="optionsCollapsed = !optionsCollapsed">Options</button>
                
                 
 	    	</div>
+
     	</div>
-    	
+    	<p></p>
 
     	<div class="row">
 			<div class="col-md-12">
+
     			<div collapse="optionsCollapsed">
-    				<hr>
-    				Options
-                  	<div class="row">
-					  <div class="col-md-3">
-					    <div class="input-group">
-					      <span class="input-group-btn">
-					        <button class="btn btn-default" type="button" ng-click="fpsMinus()">FPS - 1</button>
-					      </span>
-					      <input type="text" class="form-control" placeholder="FPS: {{fps}}" disabled>
-					       <span class="input-group-btn">
-					        <button class="btn btn-default" type="button" ng-click="fpsPlus()">FPS + 1</button>
-					      </span>
-					    </div><!-- /input-group -->
-					  </div><!-- /.col-md-3 -->
-					</div>
-					<hr>
+    				<div class="panel panel-default">
+	    				Options
+	                  	<div class="row">
+						  <div class="col-md-3">
+						    <div class="input-group">
+						      <span class="input-group-btn">
+						        <button class="btn btn-default" type="button" ng-click="fpsMinus()">FPS - 1</button>
+						      </span>
+						      <input type="text" class="form-control" placeholder="FPS: {{fps}}" disabled>
+						       <span class="input-group-btn">
+						        <button class="btn btn-default" type="button" ng-click="fpsPlus()">FPS + 1</button>
+						      </span>
+						    </div><!-- /input-group -->
+						  </div><!-- /.col-md-3 -->
+						</div>
+					
+                	</div>
                 </div>
 
                 <div collapse="professionsCollapsed">
-    				<hr>
+    				
     				<div class="row">
 					  <div class="col-md-12">
-					  <table class="table table-condensed table-bordered table-hover"> 
-					      <tr class="active">
-						    <td>
-						      <label>Idle workers: {{$root.jobs.unemployed}}</label>
-						    </td>
-						    <td>
-						      <label>Total workers: {{$root.vars.adultsNum}}</label>
-						    </td>
-						    <td>
-						      <button type="button" class="btn btn-default btn-sm" ng-click="resetJobs()">Reset Jobs</button>
-						    </td>
-						  </tr>
-						</table>
+					  <div class="panel panel-default">
+						  <table class="table table-condensed table-bordered"> 
+						      <tr class="active">
+							    <td>
+							      <label>Idle workers: {{$root.jobs.unemployed}}</label>
+							    </td>
+							    <td>
+							      <label>Total workers: {{$root.vars.adultsNum}}</label>
+							    </td>
+							    <td>
+							      <button type="button" class="btn btn-default btn-sm" ng-click="resetJobs()">Reset Jobs</button>
+							    </td>
+							  </tr>
+							</table>
+						</div>
 					  </div>
 					</div>
                   	<div class="row">
+
 					  <div class="col-md-6">
-					    <table class="table table-condensed table-bordered table-hover"> 
-					      <tr class="active">
-						    <td class="col-md-3">
-						      <label>Profession</label>
-						    </td>
-						    <td class="col-md-3">
-						      <label>Workers</label>
-						    </td>
-						    <td class="col-md-3">
-						      <label>Infrastructure for</label>
-						    </td>
-						    <td class="col-md-2">
-						      <label>Adjust</label>
-						    </td>
-						  </tr>
-						  <tr>
-						    <td class="col-md-3">
-						      Hunter
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.hunter}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobsMax.hunterMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
+					  	<div class="panel panel-default">
+						    <table class="table table-condensed table-bordered table-striped"> 
+						      <tr class="active">
+							    <td class="col-md-3">
+							      <label>Job</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label></label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Working</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label></label>
+							    </td>
+							    <td class="col-md-3">
+							      <label>Infrastructure for</label>
+							    </td>
+							    <td class="col-md-2">
+							      <label>Information</label>
+							    </td>
+							  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Gatherer
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.gatherer==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'gatherer')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'gatherer')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.gatherer}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'gatherer')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'gatherer')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.gathererMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Hunter
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.hunter==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'hunter')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'hunter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.hunter}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'hunter')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'hunter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.hunterMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
 
-						  <tr>
-						    <td class="col-md-3">
-						      Forester
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.forester}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobsMax.foresterMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'forester')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'forester')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Farmer
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.farmer==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'farmer')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'farmer')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.farmer}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'farmer')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'farmer')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.farmerMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
 
-						  <tr>
-						    <td class="col-md-3">
-						      Stonecutter
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.stonecutter}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobsMax.stonecutterMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'stonecutter')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'stonecutter')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Forester
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.forester==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'forester')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'forester')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.forester}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'forester')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'forester')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.foresterMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
 
-						  <tr>
-						    <td class="col-md-3">
-						      Hunter
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.hunter}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.hunterMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'hunter')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'hunter')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Stonecutter
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.stonecutter==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'stonecutter')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'stonecutter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.stonecutter}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'stonecutter')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'stonecutter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.stonecutterMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
 
-						</table>
+							  <tr>
+							    <td class="col-md-3">
+							      Miner
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.miner==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'miner')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'miner')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.miner}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'miner')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'miner')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.minerMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							  <tr>
+							    <td class="col-md-3">
+							      Herbalist
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.herbalist==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'herbalist')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'herbalist')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.herbalist}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'herbalist')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'herbalist')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.herbalistMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+
+							</table>
+						</div>
 					  </div><!-- /.col-md-6 -->
 
 
 					  <div class="col-md-6">
-					    <table class="table table-condensed table-bordered table-hover"> 
-					      <tr class="active">
-						    <td class="col-md-3">
-						      <label>Profession</label>
-						    </td>
-						    <td class="col-md-3">
-						      <label>Workers</label>
-						    </td>
-						    <td class="col-md-3">
-						      <label>Infrastructure for</label>
-						    </td>
-						    <td class="col-md-2">
-						      <label>Adjust</label>
-						    </td>
-						  </tr>
-						  <tr>
-						    <td class="col-md-3">
-						      Woodcutter
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.woodcutter}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobsMax.woodcutterMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'woodcutter')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'woodcutter')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
-						  <tr>
-						    <td class="col-md-3">
-						      Builder
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobs.builder}}
-						    </td>
-						    <td class="col-md-3">
-						      {{$root.jobsMax.builderMax}}
-						    </td>
-						    <td class="col-md-2">
-						      	<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(false, 'builder')">
-								  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-								</button>
-								&nbsp&nbsp
-								<button type="button" class="btn btn-default btn-sm" ng-click="increaseWorkers(true, 'builder')">
-								  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"> </span> 
-								</button>
-						    </td>
-						  </tr>
-						</table>
+					  	<div class="panel panel-default">
+						    <table class="table table-condensed table-bordered table-striped"> 
+						      <tr class="active">
+							    <td class="col-md-3">
+							      <label>Job</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label></label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Working</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label></label>
+							    </td>
+							    <td class="col-md-3">
+							      <label>Infrastructure for</label>
+							    </td>
+							    <td class="col-md-2">
+							      <label>Information</label>
+							    </td>
+							  </tr>
+							  
+							  <tr>
+							    <td class="col-md-3">
+							      Builder
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.builder==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'builder')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'builder')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.builder}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'builder')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'builder')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.builderMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							  <tr>
+							    <td class="col-md-3">
+							      Teacher
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.teacher==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'teacher')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'teacher')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.teacher}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'teacher')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'teacher')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.teacherMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							  <tr>
+							    <td class="col-md-3">
+							      Woodcutter
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.woodcutter==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'woodcutter')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'woodcutter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.woodcutter}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'woodcutter')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'woodcutter')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.woodcutterMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							  <tr>
+							    <td class="col-md-3">
+							      Blacksmith
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.blacksmith==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'blacksmith')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'blacksmith')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.blacksmith}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'blacksmith')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'blacksmith')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.blacksmithMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							  <tr>
+							    <td class="col-md-3">
+							      Tailor
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.tailor==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'tailor')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'tailor')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.tailor}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'tailor')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'tailor')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.tailorMax}}
+							    </td>
+							    <td class="col-md-2">
+							      Info
+							    </td>
+							  </tr>
+
+							</table>
+						</div>
 					  </div><!-- /.col-md-6 -->
 					</div>
-					<hr>
+					
                 </div>
 
                 <div collapse="buildingsCollapsed">
-    				<hr>
-    				<div class="row">
-					</div>
+    				
                   	<div class="row">
 					  <div class="col-md-12">
-					    <table class="table table-condensed table-bordered table-hover"> 
-					      <tr class="active">
-						    <td class="col-md-3">
-						      <label>Building</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Have</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Logs</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Stone</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Iron</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Type</label>
-						    </td>
-						    <td class="col-md-1">
-						      <label>Capacity</label>
-						    </td>
-						    <td class="col-md-2">
-						      <label>Resources</label>
-						    </td>
-						  </tr>
-						  <tr>
-						    <td class="col-md-3">
-						      House
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.buildings.house.have}}
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.buildings.house.logs}}
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.buildings.house.stone}}
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.buildings.house.iron}}
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.buildings.house.type}}
-						    </td>
-						    <td class="col-md-1">
-						      {{$root.capacity.house}}
-						    </td>
-						    <td class="col-md-2">
-						      	<div ng-switch="$root.buildings.house.logs<=$root.vars.logs&&$root.buildings.house.stone<=$root.vars.stone&&$root.buildings.house.iron<=$root.vars.iron">
-								  <button type="button" class="btn btn-primary btn-block btn-sm" ng-switch-when="true" ng-click="build('house')"><strong>Build</strong></button>
-								  <span ng-switch-when="false">
-								  	<progressbar max="maxBar" value="valBar" type="primary"></progressbar>
-								  </span>
-								</div>
-						    </td>
-						  </tr>
+					  	<div class="panel panel-default">
+						    <table class="table table-condensed table-bordered table-striped"> 
+						      <tr class="active">
+							    <td class="col-md-3">
+							      <label>Building</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Have</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Logs</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Stone</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Iron</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Type</label>
+							    </td>
+							    <td class="col-md-1">
+							      <label>Capacity</label>
+							    </td>
+							    <td class="col-md-2">
+							      <label>Resources</label>
+							    </td>
+							  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      House
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.buildings.house.have}}
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.buildings.house.logs}}
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.buildings.house.stone}}
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.buildings.house.iron}}
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.buildings.house.type}}
+							    </td>
+							    <td class="col-md-1">
+							      {{$root.capacity.house}}
+							    </td>
+							    <td class="col-md-2">
+							      	<div ng-switch="$root.buildings.house.logs<=$root.vars.logs&&$root.buildings.house.stone<=$root.vars.stone&&$root.buildings.house.iron<=$root.vars.iron">
+									  <button type="button" class="btn btn-primary btn-block btn-sm" ng-switch-when="true" ng-click="build('house')"><strong>Build</strong></button>
+									  <span ng-switch-when="false">
+									  	<progressbar max="maxBar" value="valBar" type="primary"></progressbar>
+									  </span>
+									</div>
+							    </td>
+							  </tr>
 
-						</table>
+							</table>
+						</div>
 					  </div><!-- /.col-md-6 -->
 					  
 					</div>
-					<hr>
+					
                 </div>
 
             </div>
