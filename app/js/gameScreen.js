@@ -397,7 +397,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       }
       //$scope.calcHomeless();
       $scope.gather();
-      $scope.maxBarCalc('house');
+      $scope.maxBarCalc();
       $scope.buildProcess();
       
       
@@ -420,18 +420,22 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
     $scope.calcStudent = function() {
       $rootScope.capacity.students = $rootScope.jobs.teacher * $rootScope.buildings.school.have * $rootScope.buildings.school.cap;
-      console.log("student cap:" + $rootScope.capacity.students);
+      //console.log("student cap:" + $rootScope.capacity.students);
     }
 
-    $scope.maxBarCalc = function(name) {
-      $scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
-      var logs = $rootScope.vars.logs;
-      if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
-      var stone = $rootScope.vars.stone;
-      if (stone > $rootScope.buildings[name]['stone']) stone = $rootScope.buildings[name]['stone'];
-      var iron = $rootScope.vars.iron; 
-      if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
-      $scope.valBar= logs + stone + iron;
+    $scope.maxBarCalc = function() {
+      for (var i in $rootScope.buildings) {
+        var name = i;
+        $scope.maxBar[i]=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
+        //console.log($scope.maxBar[i] + i);
+        var logs = $rootScope.vars.logs;
+        if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
+        var stone = $rootScope.vars.stone;
+        if (stone > $rootScope.buildings[name]['stone']) stone = $rootScope.buildings[name]['stone'];
+        var iron = $rootScope.vars.iron; 
+        if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
+        $scope.valBar[i]=(logs + stone + iron);
+      }
     }
 
     $scope.makeBaby = function() {
@@ -480,13 +484,14 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
       $rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
       //$rootScope.buildings[bname]['have']++;
-      $rootScope.queue.push({"name":pretty});
+      $rootScope.queue.push({"name":pretty, "pass":name});
     }
 
     $scope.buildProcess = function() {
       var power = $scope.calculateGather($rootScope.jobs.builder, 365);
       if ($rootScope.queue.length>0) {
-        var name = $rootScope.queue[0]['name'];
+        var name = $rootScope.queue[0]['pass'];
+        //console.log(name);
         $scope.buildBarMax = ($rootScope.buildings[name]['logs'] + $rootScope.buildings[name]['stone'] + $rootScope.buildings[name]['iron']) * 2;
         $scope.buildBarVal += power;
         if ($scope.buildBarVal>=$scope.buildBarMax) {
@@ -579,6 +584,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     $scope.buildBarMax=100;
     $scope.buildBarVal=0;
 
+    
+
+
+
 
     
     //console.log($rootScope.adults);
@@ -590,10 +599,18 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     $scope.foodAttempts = 0;
     $scope.loadAll();
     $scope.saveAll();
-
+    $scope.maxBar={};
+    $scope.valBar={};
     $scope.dayOld=$scope.date.dayOfYear();
     $scope.monthOld=$scope.date.month();
     $scope.weekOld=$scope.date.week();
+
+    
+    for (var i in $rootScope.buildings) {
+      //console.log(i);
+      $scope.maxBar[i]=1000;
+      $scope.valBar[i]=0;
+    }
 
     //$rootScope.vars.todayWeather=Math.floor((Math.random() * $rootScope.defaultTemp[$scope.monthOld].max) + $rootScope.defaultTemp[$scope.monthOld].min);
     //console.log($rootScope.vars.todayWeather);
