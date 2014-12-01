@@ -86,7 +86,8 @@ $scope.resetValues = function() {
 		  "studentsNum": 0,
 		  "childrenNum": 0,
 		  "haveRoof": 0,
-		  "todayWeather": 20
+		  "todayWeather": 20,
+		  "education": 0
 		};
 
 		$rootScope.jobs=
@@ -132,17 +133,18 @@ $scope.resetValues = function() {
 
 		$rootScope.buildings=
 		{
-			"house": {"have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Shelter"},
+			"house": {"have":0, "logs": 10, "stone": 5, "iron": 0, "type": "Shelter"},
 
 			"barn": 0,
 			"storage": 0,
-			"school": 0
+			"school": {"have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education"}
 		}
 
 		$rootScope.capacity=
 		{
 			"students": 0,
 			"house": 3,
+			"school": 5,
 			"heatEf": 1.5       //wood usage per week
 		}
 
@@ -171,6 +173,8 @@ $scope.resetValues = function() {
 			$rootScope.vars.firewood=400;
 			$rootScope.vars.tools=50;
 			$rootScope.vars.coats=40;
+			$rootScope.vars.education=12;
+
 		}
 		else if ($scope.radioDifficulty=='Medium') {
 			$rootScope.vars.adultsNum=10;
@@ -184,6 +188,7 @@ $scope.resetValues = function() {
 			$rootScope.vars.firewood=200;
 			$rootScope.vars.tools=30;
 			$rootScope.vars.coats=30;
+			$rootScope.vars.education=10;
 		}
 		else {
 			$rootScope.vars.adultsNum=8;
@@ -194,6 +199,7 @@ $scope.resetValues = function() {
 			$rootScope.vars.firewood=100;
 			$rootScope.vars.tools=20;
 			$rootScope.vars.coats=20;
+			$rootScope.vars.education=8;
 		}
 
 		//http://www.usclimatedata.com/
@@ -287,7 +293,7 @@ $scope.resetValues = function() {
 			var binGender=Math.floor((Math.random() * 2) + 1);
 			if (binGender==1) var gender = 'male';
 			else var gender = 'female';
-			$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'job':'none'});
+			$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'true'});
 			$rootScope.jobs.unemployed++;
 		}
 
@@ -298,7 +304,7 @@ $scope.resetValues = function() {
 			//console.log(binGender);
 			if (binGender==1) var gender = 'male';
 			else var gender = 'female';
-			$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay});
+			$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'false'});
 		}
 		
     };    

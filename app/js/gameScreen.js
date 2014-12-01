@@ -364,6 +364,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $scope.dayOld=$scope.date.dayOfYear();
           $scope.ageOneDay();
           $scope.calcHomeless();
+          $scope.calcStudent();
           //temperature generation
           if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
             $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
@@ -415,6 +416,11 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       if (maxHousing>=$rootScope.vars.population) $rootScope.vars.haveRoof = $rootScope.vars.population;
       else $rootScope.vars.haveRoof = maxHousing;
+    }
+
+    $scope.calcStudent = function() {
+      $rootScope.capacity.students = $rootScope.jobs.teacher * $rootScope.buildings.school.have * $rootScope.capacity.school;
+      console.log("student cap:" + $rootScope.capacity.students);
     }
 
     $scope.maxBarCalc = function(name) {
