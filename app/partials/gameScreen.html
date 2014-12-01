@@ -549,31 +549,31 @@
 							      <label>Resources</label>
 							    </td>
 							  </tr>
-							  <tr>
+							  <tr ng-repeat="i in buildings">
 							    <td class="col-md-3">
-							      House
+							      {{i.name}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.buildings.house.have}}
+							      {{i.have}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.buildings.house.logs}}
+							      {{i.logs}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.buildings.house.stone}}
+							      {{i.stone}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.buildings.house.iron}}
+							      {{i.iron}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.buildings.house.type}}
+							      {{i.type}}
 							    </td>
 							    <td class="col-md-1">
-							      {{$root.capacity.house}}
+							      {{i.cap}}
 							    </td>
 							    <td class="col-md-2">
 							      	<div ng-switch="$root.buildings.house.logs<=$root.vars.logs&&$root.buildings.house.stone<=$root.vars.stone&&$root.buildings.house.iron<=$root.vars.iron">
-									  <button type="button" class="btn btn-primary btn-block btn-sm" ng-switch-when="true" ng-click="build('house')"><strong>Build</strong></button>
+									  <button type="button" class="btn btn-primary btn-block btn-sm" ng-switch-when="true" ng-click="build(i.pass, i.name)"><strong>Build {{i.name}}</strong></button>
 									  <span ng-switch-when="false">
 									  	<progressbar max="maxBar" value="valBar" type="primary"></progressbar>
 									  </span>

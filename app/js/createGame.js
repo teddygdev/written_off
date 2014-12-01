@@ -133,18 +133,15 @@ $scope.resetValues = function() {
 
 		$rootScope.buildings=
 		{
-			"house": {"have":0, "logs": 10, "stone": 5, "iron": 0, "type": "Shelter"},
-
-			"barn": 0,
-			"storage": 0,
-			"school": {"have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education"}
+			"house": {"name":"Yurt","have":0, "logs": 10, "stone": 5, "iron": 0, "type": "Shelter", "cap":3, "pass":"house"},
+			"barn": {"name":"Food Cache","have":0, "logs": 30, "stone": 10, "iron": 0, "type": "Food Storage", "cap":3000, "pass":"barn"},
+			"storage": {"name":"Storage Pit","have":0, "logs": 2, "stone": 2, "iron": 0, "type": "Shelter", "cap":250, "pass":"storage"},
+			"school": {"name":"Fire Pit","have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education", "cap":5, "pass":"school"}
 		}
 
 		$rootScope.capacity=
 		{
 			"students": 0,
-			"house": 3,
-			"school": 5,
 			"heatEf": 1.5       //wood usage per week
 		}
 

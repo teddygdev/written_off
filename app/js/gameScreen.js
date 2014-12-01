@@ -326,7 +326,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           //console.log('roof'+$rootScope.vars.haveRoof);
         }
         $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from frostbite due to lack of housing 2'); 
-        var woodNeed = Math.round(($rootScope.vars.haveRoof / $rootScope.capacity.house) * $rootScope.capacity.heatEf);
+        var woodNeed = Math.round(($rootScope.vars.haveRoof / $rootScope.buildings.house.cap) * $rootScope.capacity.heatEf);
           //console.log(foodNeed);
           if (woodNeed <= $rootScope.vars.firewood) {
             $rootScope.vars.firewood -= woodNeed;
@@ -338,12 +338,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             if (freezingNew > $rootScope.conditions.freezing) {
               //console.log($rootScope.conditions.freezing);
               //console.log("going to kill:" + $rootScope.conditions.freezing * $rootScope.capacity.house);
-              $scope.kill($rootScope.conditions.freezing * $rootScope.capacity.house, ' died from frostbite');
+              $scope.kill($rootScope.conditions.freezing * $rootScope.buildings.house.cap, ' died from frostbite');
               $rootScope.conditions.freezing = freezingNew - $rootScope.conditions.freezing;
             }
             else {
               //console.log("going to kill:" +freezingNew);
-              $scope.kill(freezingNew * $rootScope.capacity.house, ' died from frostbite');
+              $scope.kill(freezingNew * $rootScope.buildings.house.cap, ' died from frostbite');
               if ($rootScope.vars.population > $rootScope.conditions.freezing) $rootScope.conditions.freezing = freezingNew;
               else $rootScope.conditions.freezing = $rootScope.vars.population;
             }
@@ -408,8 +408,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     };
 
     $scope.calcHomeless = function() {
-      $rootScope.vars.haveRoof = $rootScope.buildings.house.have * $rootScope.capacity.house;
-      var maxHousing = $rootScope.buildings.house.have * $rootScope.capacity.house;
+      $rootScope.vars.haveRoof = $rootScope.buildings.house.have * $rootScope.buildings.house.cap;
+      var maxHousing = $rootScope.buildings.house.have * $rootScope.buildings.house.cap;
       if ($rootScope.vars.population - $rootScope.vars.haveRoof>0) {
           //console.log('popcalc:'+$rootScope.vars.population);
           //console.log('roofcalc'+$rootScope.vars.haveRoof);
@@ -419,7 +419,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     $scope.calcStudent = function() {
-      $rootScope.capacity.students = $rootScope.jobs.teacher * $rootScope.buildings.school.have * $rootScope.capacity.school;
+      $rootScope.capacity.students = $rootScope.jobs.teacher * $rootScope.buildings.school.have * $rootScope.buildings.school.cap;
       console.log("student cap:" + $rootScope.capacity.students);
     }
 
@@ -443,7 +443,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       }
       if (men>=women) var posBabies = women;
       else var posBabies = men;
-      var capacity = ($rootScope.buildings.house.have * $rootScope.capacity.house) - $rootScope.vars.haveRoof;
+      var capacity = ($rootScope.buildings.house.have * $rootScope.buildings.house.cap) - $rootScope.vars.haveRoof;
       //console.log(capacity);
       if (capacity>=posBabies) var makeBabies=posBabies;
       else var makeBabies=capacity;
@@ -467,7 +467,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //console.log('length' + $rootScope.babies.length);
     }
 
-    $scope.build = function(name) {
+    $scope.build = function(name, pretty) {
       //$scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
       //var logs = $rootScope.vars.logs;
       //if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
@@ -480,7 +480,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
       $rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
       //$rootScope.buildings[bname]['have']++;
-      $rootScope.queue.push({"name":name});
+      $rootScope.queue.push({"name":pretty});
     }
 
     $scope.buildProcess = function() {
