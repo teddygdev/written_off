@@ -166,7 +166,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //console.log($rootScope.adults[0].birthday);
       var todayRandom=$scope.random(20000, 1);
       for (var i = 0; i < $rootScope.adults.length; i++) {
-        $rootScope.adults[i].birthday++;
+        $rootScope.adults[i].birthday += $rootScope.vars.day;
         if ($rootScope.adults[i].birthday > 365) {
           $rootScope.adults[i].birthday=1;
           $rootScope.adults[i].age++;
@@ -180,13 +180,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       }
       for (var i = 0; i < $rootScope.students.length; i++) {
-        $rootScope.students[i].birthday++;
+        $rootScope.students[i].birthday += $rootScope.vars.day;
         if ($rootScope.students[i].birthday > 365) {
           $rootScope.students[i].birthday=1;
           $rootScope.students[i].age++;
           if ($rootScope.students[i].age > 15) {
             $rootScope.adults.push({'name': $rootScope.students[i].name, 'age': $rootScope.students[i].age, 'gender':$rootScope.students[i].gender,
-              'birthday':$rootScope.students[i].birthday, 'job':'none'});
+              'birthday':$rootScope.students[i].birthday, 'education':'true'});
             $rootScope.jobs.unemployed++;
             $rootScope.vars.studentsNum--;
             $rootScope.vars.adultsNum++;
@@ -199,21 +199,21 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       }
       for (var i = 0; i < $rootScope.children.length; i++) {
-        $rootScope.children[i].birthday++;
+        $rootScope.children[i].birthday += $rootScope.vars.day;
         if ($rootScope.children[i].birthday > 365) {
           $rootScope.children[i].birthday=1;
           $rootScope.children[i].age++;
           if ($rootScope.children[i].age > 10) {
-            if ($rootScope.capacity.students < $rootScope.vars.studentsNum) {
+            if ($rootScope.capacity.students > $rootScope.vars.studentsNum) {
               $rootScope.students.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
-                'birthday':$rootScope.children[i].birthday, 'job':'none'});
+                'birthday':$rootScope.children[i].birthday, 'education':'false'});
               $rootScope.children.splice(i, 1);
               $rootScope.vars.studentsNum++;
               $rootScope.vars.childrenNum--;
             }
             else {
               $rootScope.adults.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
-                'birthday':$rootScope.children[i].birthday, 'job':'none'});
+                'birthday':$rootScope.children[i].birthday, 'education':'false'});
               $rootScope.children.splice(i, 1);
               $rootScope.jobs.unemployed++;
               $rootScope.vars.childrenNum--;
@@ -227,8 +227,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       }
       for (var i = 0; i < $rootScope.babies.length; i++) {
-        $rootScope.babies[i].birthday++;
-        if ($rootScope.babies[i].birthday == 0) {
+        $rootScope.babies[i].birthday += $rootScope.vars.day;
+        if ($rootScope.babies[i].birthday >= 0) {
           var birthday=$scope.date.dayOfYear();
           var binGender=Math.floor((Math.random() * 2) + 1);
           if (binGender==1) var gender = 'male';
@@ -419,8 +419,22 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     $scope.calcStudent = function() {
-      $rootScope.capacity.students = $rootScope.jobs.teacher * $rootScope.buildings.school.have * $rootScope.buildings.school.cap;
-      //console.log("student cap:" + $rootScope.capacity.students);
+      if ($rootScope.jobs.teacher>=$rootScope.buildings.school.have) var count = $rootScope.buildings.school.have;
+      else var count = $rootScope.jobs.teacher;
+      $rootScope.capacity.students = count * $rootScope.buildings.school.cap;
+      console.log("student cap:" + $rootScope.capacity.students);
+      console.log("student num:" + $rootScope.vars.studentsNum);
+      if ($rootScope.capacity.students<$rootScope.vars.studentsNum) {
+            var i = $rootScope.vars.studentsNum-1;
+            console.log(i);
+            $rootScope.adults.push({'name': $rootScope.students[i].name, 'age': $rootScope.students[i].age, 'gender':$rootScope.students[i].gender,
+              'birthday':$rootScope.students[i].birthday, 'education':'false'});
+            $rootScope.jobs.unemployed++;
+            $rootScope.vars.studentsNum--;
+            $rootScope.vars.adultsNum++;
+            $rootScope.students.splice(i, 1);
+            console.log("dropped a student");
+      }
     }
 
     $scope.maxBarCalc = function() {

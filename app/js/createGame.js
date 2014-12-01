@@ -30,6 +30,7 @@ $scope.randomTown = function() {
 $scope.radioDifficulty = 'Medium';
 $scope.radioGender = 'Male';
 $scope.radioClimate = 'Mild';
+$scope.radioAge = 'Real';
 $scope.randomName();
 $scope.randomTown();
 
@@ -64,7 +65,8 @@ $scope.resetValues = function() {
 			"rulerName": $scope.userName,
 		  	"townName": $scope.userTown,
 		  	"gender": $scope.radioGender,
-		  	"climate": $scope.radioClimate
+		  	"climate": $scope.radioClimate,
+		  	"aging": $scope.radioAge
 		};
 
         $rootScope.vars=
@@ -87,7 +89,8 @@ $scope.resetValues = function() {
 		  "childrenNum": 0,
 		  "haveRoof": 0,
 		  "todayWeather": 20,
-		  "education": 0
+		  "education": 0,
+		  "day": 1
 		};
 
 		$rootScope.jobs=
@@ -136,7 +139,7 @@ $scope.resetValues = function() {
 			"house": {"name":"Yurt","have":0, "logs": 10, "stone": 5, "iron": 0, "type": "Shelter", "cap":3, "pass":"house"},
 			"barn": {"name":"Food Cache","have":0, "logs": 30, "stone": 10, "iron": 0, "type": "Food Storage", "cap":3000, "pass":"barn"},
 			"storage": {"name":"Storage Pit","have":0, "logs": 2, "stone": 2, "iron": 0, "type": "Shelter", "cap":250, "pass":"storage"},
-			"school": {"name":"Fire Pit","have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education", "cap":5, "pass":"school"}
+			"school": {"name":"Village Gathering","have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education", "cap":5, "pass":"school"}
 		}
 
 		$rootScope.capacity=
@@ -157,6 +160,9 @@ $scope.resetValues = function() {
 		$rootScope.children=[];		
     	$rootScope.babies= [];  //make rootscope
     	$rootScope.queue = [];  //make rootscope
+
+    	if ($scope.radioAge=='Real') $rootScope.vars.day=1;
+    	$rootScope.vars.day=10;
 
 		if ($scope.radioDifficulty=='Easy') {
 			$rootScope.vars.adultsNum=12;
@@ -186,6 +192,20 @@ $scope.resetValues = function() {
 			$rootScope.vars.tools=30;
 			$rootScope.vars.coats=30;
 			$rootScope.vars.education=10;
+		}
+		else if ($scope.radioDifficulty=='Biblical') {
+			$rootScope.vars.adultsNum=2;
+			$rootScope.vars.studentsNum=0;
+			$rootScope.vars.childrenNum=0;
+			$rootScope.vars.population=2;
+			$rootScope.vars.food=300;
+			$rootScope.vars.logs=30;
+			$rootScope.vars.stone=20;
+			$rootScope.vars.iron=10;
+			$rootScope.vars.firewood=50;
+			$rootScope.vars.tools=5;
+			$rootScope.vars.coats=5;
+			$rootScope.vars.education=2;
 		}
 		else {
 			$rootScope.vars.adultsNum=8;
@@ -283,26 +303,31 @@ $scope.resetValues = function() {
 
 
 
-		
-		for (var i=0; i < $rootScope.vars.adultsNum; i++) {
-			var randomAge=Math.floor((Math.random() * 10) + 1) + 20;
-			var birthdayDay=Math.floor((Math.random() * 363) + 1);
-			var binGender=Math.floor((Math.random() * 2) + 1);
-			if (binGender==1) var gender = 'male';
-			else var gender = 'female';
-			$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'true'});
-			$rootScope.jobs.unemployed++;
+		if ($scope.radioDifficulty=='Biblical') {
+			$rootScope.adults.push({'name':'Adam', 'age':18, 'gender':'male', 'birthday':1, 'education':'true'});
+			$rootScope.adults.push({'name':'Eve', 'age':18, 'gender':'female', 'birthday':5, 'education':'true'});
 		}
+		else {
+			for (var i=0; i < $rootScope.vars.adultsNum; i++) {
+				var randomAge=Math.floor((Math.random() * 10) + 1) + 20;
+				var birthdayDay=Math.floor((Math.random() * 363) + 1);
+				var binGender=Math.floor((Math.random() * 2) + 1);
+				if (binGender==1) var gender = 'male';
+				else var gender = 'female';
+				$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'true'});
+				$rootScope.jobs.unemployed++;
+			}
 
-		for (var i=0; i < $rootScope.vars.childrenNum; i++) {
-			var randomAge=Math.floor((Math.random() * 6) + 1) + 1;
-			var birthdayDay=Math.floor((Math.random() * 363) + 1);
-			var binGender=Math.floor((Math.random() * 2) + 1);
-			//console.log(binGender);
-			if (binGender==1) var gender = 'male';
-			else var gender = 'female';
-			$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'false'});
-		}
+			for (var i=0; i < $rootScope.vars.childrenNum; i++) {
+				var randomAge=Math.floor((Math.random() * 6) + 1) + 1;
+				var birthdayDay=Math.floor((Math.random() * 363) + 1);
+				var binGender=Math.floor((Math.random() * 2) + 1);
+				//console.log(binGender);
+				if (binGender==1) var gender = 'male';
+				else var gender = 'female';
+				$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'false'});
+			}
+		}	
 		
     };    
 
