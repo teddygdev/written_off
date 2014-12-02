@@ -95,7 +95,8 @@ $scope.resetValues = function() {
 		  "productivityEdu": 100,
 		  "productivityCoats": 100,
 		  "productivityHealth": 100,
-		  "productivityTools": 100
+		  "productivityTools": 100,
+		  "productivityCold": 100
 		};
 
 		$rootScope.jobs=

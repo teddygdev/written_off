@@ -253,7 +253,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     $scope.calculateGather = function(people, base1year) {
-        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * ($rootScope.vars.productivityEdu)/100; //35040 - 15 minute intervals in a year
+        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * ($rootScope.vars.productivityEdu)/100 * ($rootScope.vars.productivityTools)/100 * ($rootScope.vars.productivityCoats)/100;
+        //35040 - 15 minute intervals in a year
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
         //goes off ~ 100 times (24*4)
     }
@@ -270,7 +271,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           }
           else max = people;
         }
-        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * ($rootScope.vars.productivityEdu)/100;
+        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * ($rootScope.vars.productivityEdu)/100 * ($rootScope.vars.productivityTools)/100 * ($rootScope.vars.productivityCoats)/100;
         $rootScope.vars[mat] -= needed1 * max;
         $rootScope.vars[base] += created;
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
@@ -315,7 +316,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           //console.log("gratis");
         }
         else {
-          $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from frostbite due to lack of housing 1'); 
+          if ($rootScope.vars.todayWeather >= 0) console.log("You should build some houses before your villagers freeze to death");
+          else $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from freezing outside'); 
         }
 
 
@@ -325,7 +327,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           //console.log('pop:'+$rootScope.vars.population);
           //console.log('roof'+$rootScope.vars.haveRoof);
         }
-        $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from frostbite due to lack of housing 2'); 
+        if ($rootScope.vars.todayWeather >= 0) console.log("You should build some houses before your villagers freeze to death");
+        else $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from freezing outside'); 
         var woodNeed = Math.round(($rootScope.vars.haveRoof / $rootScope.buildings.house.cap) * $rootScope.capacity.heatEf);
           //console.log(foodNeed);
           if (woodNeed <= $rootScope.vars.firewood) {
@@ -365,7 +368,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $scope.ageOneDay();
           $scope.calcHomeless();
           $scope.calcStudent();
-          $scope.calcEducation();
+          $scope.calcProductivity();
           //temperature generation
           if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
             $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
@@ -437,7 +440,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       }
     }
 
-    $scope.calcEducation = function() {
+    $scope.calcProductivity = function() {
       var count = 0;
 
       for (var i in $rootScope.adults) {
@@ -449,6 +452,16 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.education=count;
       $rootScope.vars.productivityEdu=($rootScope.vars.education/$rootScope.vars.adultsNum) * 100;
       $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/2));
+      $rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
+      $rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/4));
+      
+      $rootScope.vars.productivityCoats=($rootScope.vars.coats/$rootScope.vars.adultsNum) * 100;
+      if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
+      else if ($rootScope.vars.todayWeather < 20) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/2));
+      else if ($rootScope.vars.todayWeather < 15) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/3));
+      else if ($rootScope.vars.todayWeather < 10) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/4));
+      else if ($rootScope.vars.todayWeather < 5) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/7));
+      else $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/10));
       //console.log($rootScope.vars.productivityEdu);
     }
 
