@@ -186,7 +186,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $rootScope.students[i].age++;
           if ($rootScope.students[i].age > 15) {
             $rootScope.adults.push({'name': $rootScope.students[i].name, 'age': $rootScope.students[i].age, 'gender':$rootScope.students[i].gender,
-              'birthday':$rootScope.students[i].birthday, 'education':'true'});
+              'birthday':$rootScope.students[i].birthday, 'education':true});
             $rootScope.jobs.unemployed++;
             $rootScope.vars.studentsNum--;
             $rootScope.vars.adultsNum++;
@@ -206,14 +206,14 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           if ($rootScope.children[i].age > 10) {
             if ($rootScope.capacity.students > $rootScope.vars.studentsNum) {
               $rootScope.students.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
-                'birthday':$rootScope.children[i].birthday, 'education':'false'});
+                'birthday':$rootScope.children[i].birthday, 'education':false});
               $rootScope.children.splice(i, 1);
               $rootScope.vars.studentsNum++;
               $rootScope.vars.childrenNum--;
             }
             else {
               $rootScope.adults.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
-                'birthday':$rootScope.children[i].birthday, 'education':'false'});
+                'birthday':$rootScope.children[i].birthday, 'education':false});
               $rootScope.children.splice(i, 1);
               $rootScope.jobs.unemployed++;
               $rootScope.vars.childrenNum--;
@@ -253,12 +253,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     $scope.calculateGather = function(people, base1year) {
-        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040); //35040 - 15 minute intervals in a year
+        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * ($rootScope.vars.productivityEdu)/100; //35040 - 15 minute intervals in a year
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
         //goes off ~ 100 times (24*4)
     }
 
-    $scope.calculateProduction = function(people, base, base1year, mat, mat1year) {
+    $scope.calculateProduction = function(people, base, base1year, mat, mat1year) { //when producing only reduce/increase output for productivity modifiers
         var needed1 = ($scope.timeStep/100)*$rootScope.multiplier*1*(mat1year/35040); //35040 - 15 minute intervals in a year
         var max = 0;
         //console.log($rootScope.vars[mat]);
@@ -270,7 +270,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           }
           else max = people;
         }
-        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040);
+        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * ($rootScope.vars.productivityEdu)/100;
         $rootScope.vars[mat] -= needed1 * max;
         $rootScope.vars[base] += created;
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
@@ -365,6 +365,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $scope.ageOneDay();
           $scope.calcHomeless();
           $scope.calcStudent();
+          $scope.calcEducation();
           //temperature generation
           if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
             $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
@@ -422,19 +423,33 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       if ($rootScope.jobs.teacher>=$rootScope.buildings.school.have) var count = $rootScope.buildings.school.have;
       else var count = $rootScope.jobs.teacher;
       $rootScope.capacity.students = count * $rootScope.buildings.school.cap;
-      console.log("student cap:" + $rootScope.capacity.students);
-      console.log("student num:" + $rootScope.vars.studentsNum);
+      //console.log("student cap:" + $rootScope.capacity.students);
+      //console.log("student num:" + $rootScope.vars.studentsNum);
       if ($rootScope.capacity.students<$rootScope.vars.studentsNum) {
             var i = $rootScope.vars.studentsNum-1;
-            console.log(i);
             $rootScope.adults.push({'name': $rootScope.students[i].name, 'age': $rootScope.students[i].age, 'gender':$rootScope.students[i].gender,
-              'birthday':$rootScope.students[i].birthday, 'education':'false'});
+              'birthday':$rootScope.students[i].birthday, 'education':false});
             $rootScope.jobs.unemployed++;
             $rootScope.vars.studentsNum--;
             $rootScope.vars.adultsNum++;
             $rootScope.students.splice(i, 1);
             console.log("dropped a student");
       }
+    }
+
+    $scope.calcEducation = function() {
+      var count = 0;
+
+      for (var i in $rootScope.adults) {
+        //console.log($rootScope.adults[i]['education']);
+        if($rootScope.adults[i]['education']==true) {
+          count++;
+        }
+      }
+      $rootScope.vars.education=count;
+      $rootScope.vars.productivityEdu=($rootScope.vars.education/$rootScope.vars.adultsNum) * 100;
+      $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/2));
+      //console.log($rootScope.vars.productivityEdu);
     }
 
     $scope.maxBarCalc = function() {

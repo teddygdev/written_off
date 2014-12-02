@@ -90,7 +90,12 @@ $scope.resetValues = function() {
 		  "haveRoof": 0,
 		  "todayWeather": 20,
 		  "education": 0,
-		  "day": 1
+		  "day": 1,
+		  "buildingsAllowed": 15,
+		  "productivityEdu": 100,
+		  "productivityCoats": 100,
+		  "productivityHealth": 100,
+		  "productivityTools": 100
 		};
 
 		$rootScope.jobs=
@@ -304,8 +309,8 @@ $scope.resetValues = function() {
 
 
 		if ($scope.radioDifficulty=='Biblical') {
-			$rootScope.adults.push({'name':'Adam', 'age':18, 'gender':'male', 'birthday':1, 'education':'true'});
-			$rootScope.adults.push({'name':'Eve', 'age':18, 'gender':'female', 'birthday':5, 'education':'true'});
+			$rootScope.adults.push({'name':'Adam', 'age':18, 'gender':'male', 'birthday':1, 'education':true});
+			$rootScope.adults.push({'name':'Eve', 'age':18, 'gender':'female', 'birthday':5, 'education':true});
 		}
 		else {
 			for (var i=0; i < $rootScope.vars.adultsNum; i++) {
@@ -314,7 +319,7 @@ $scope.resetValues = function() {
 				var binGender=Math.floor((Math.random() * 2) + 1);
 				if (binGender==1) var gender = 'male';
 				else var gender = 'female';
-				$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'true'});
+				$rootScope.adults.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':true});
 				$rootScope.jobs.unemployed++;
 			}
 
@@ -325,7 +330,7 @@ $scope.resetValues = function() {
 				//console.log(binGender);
 				if (binGender==1) var gender = 'male';
 				else var gender = 'female';
-				$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':'false'});
+				$rootScope.children.push({'name':faker.name.firstName(), 'age':randomAge, 'gender':gender, 'birthday':birthdayDay, 'education':false});
 			}
 		}	
 		
