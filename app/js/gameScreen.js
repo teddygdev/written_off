@@ -451,11 +451,16 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       }
       $rootScope.vars.education=count;
       $rootScope.vars.productivityEdu=($rootScope.vars.education/$rootScope.vars.adultsNum) * 100;
-      $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/2));
-	  console.log($rootScope.vars.productivityEdu);
+      $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/4));
+	  console.log("edu" + $rootScope.vars.productivityEdu);
       $rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
-      $rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/4));
-	  console.log($rootScope.vars.productivityTools);
+	  if ($rootScope.vars.tools<$rootScope.vars.adultsNum( {
+		$rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
+		$rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/6));
+	  }
+	  else 
+      $rootScope.vars.productivityTools = 100;
+	  console.log("tools" + $rootScope.vars.productivityTools);
       
       $rootScope.vars.productivityCoats=($rootScope.vars.coats/$rootScope.vars.adultsNum) * 100;
       if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
@@ -464,7 +469,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       else if ($rootScope.vars.todayWeather < 10) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/4));
       else if ($rootScope.vars.todayWeather < 5) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/7));
       else $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/10));
-      //console.log($rootScope.vars.productivityEdu);
+      console.log("coats" + $rootScope.vars.productivityCoats);
     }
 
     $scope.maxBarCalc = function() {
