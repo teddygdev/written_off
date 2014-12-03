@@ -454,7 +454,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/4));
 	  console.log("edu" + $rootScope.vars.productivityEdu);
       $rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
-	  if ($rootScope.vars.tools<$rootScope.vars.adultsNum( {
+	  if ($rootScope.vars.tools<$rootScope.vars.adultsNum) {
 		$rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
 		$rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/6));
 	  }
