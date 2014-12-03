@@ -253,7 +253,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     $scope.calculateGather = function(people, base1year) {
-        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * ($rootScope.vars.productivityEdu)/100 * ($rootScope.vars.productivityTools)/100 * ($rootScope.vars.productivityCoats)/100;
+        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * (($rootScope.vars.productivityEdu)/100) * (($rootScope.vars.productivityTools)/100) * (($rootScope.vars.productivityCoats)/100);
         //35040 - 15 minute intervals in a year
         //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
         //goes off ~ 100 times (24*4)
