@@ -452,8 +452,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.education=count;
       $rootScope.vars.productivityEdu=($rootScope.vars.education/$rootScope.vars.adultsNum) * 100;
       $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/2));
+	  console.log($rootScope.vars.productivityEdu);
       $rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
       $rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/4));
+	  console.log($rootScope.vars.productivityTools);
       
       $rootScope.vars.productivityCoats=($rootScope.vars.coats/$rootScope.vars.adultsNum) * 100;
       if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
