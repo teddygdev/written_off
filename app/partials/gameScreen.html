@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="panel panel-default" style="height: 20px">
-		<progressbar max="maxBar" value="valBar" type="primary"><strong class="strokeme">Tool&nbspAge</strong></progressbar>
+		<progressbar max="$root.vars.exploreMax" value="$root.vars.exploreVal * 100 / $root.vars.exploreMax" type="primary"><strong class="strokeme">Exploration and Clearing</strong></progressbar>
 	</div>
 		<div class="panel panel-default">
 			<div class="row">
@@ -18,9 +18,19 @@
 			  	<div class="col-md-2">Herbs: {{$root.vars.herbs | number: 0}}</div>
 			  	<div class="col-md-2">Weather: {{$root.vars.todayWeather}}&deg C </span></div>
 			</div>
+			<div class="row">
+			  	<div class="col-md-2">Leather: {{$root.vars.leather | number: 0}}</div>
+			  	<div class="col-md-2">Building Limit: {{$root.vars.buildingLimit  | number: 0}}</div>
+			  	<div class="col-md-2">Storage Limit: {{$root.vars.matLimit | number: 0}}</div>
+			  	<div class="col-md-2">Raw Material Limit: {{$root.vars.rawLimit | number: 0}}</div>
+			  	<div class="col-md-2">Education: {{($root.vars.education/$root.vars.adultsNum)*100 | number: 0}}%</div>
+			  	<div class="col-md-2">Health: {{$root.vars.health | number: 0}}%</div>
+			</div>
 
 			<div class="row">
-				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue" class="animate" ng-class="{'label label-success':$first}">&nbsp{{item.name}}</span></div>
+				<div class="col-md-12">Build Queue: <span ng-repeat="item in queue track by $index" class="animate" ng-class="{'label label-warning':$first}">&nbsp{{item.name}}</span>
+					<button type="button" class="close" ng-click="popQueue()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				</div>
 			</div>
 		</div>
 
@@ -28,7 +38,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-default" style="height: 20px">
-	    			<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="success" class="progress-striped active"><strong  class="strokeme">Building&nbspProgress:&nbsp{{(buildBarVal * 100 / buildBarMax) | number: 0}}%</strong></progressbar>
+	    			<progressbar max="buildBarMax" value="(buildBarVal * 100 / buildBarMax)" type="warning" class="progress-striped active"><strong  class="strokeme">Builder&nbspProgress:&nbsp{{(buildBarVal * 100 / buildBarMax) | number: 0}}%</strong></progressbar>
 	    		</div>
 	    		<button class="btn btn-default" ng-click="professionsCollapsed = !professionsCollapsed">Jobs</button>
 	    		<button class="btn btn-default" ng-click="buildingsCollapsed = !buildingsCollapsed">Buildings</button>
@@ -105,8 +115,38 @@
 							    <td class="col-md-3">
 							      <label>Infrastructure for</label>
 							    </td>
-							    <td class="col-md-2">
+							    <td class="col-md-3">
 							      <label>Information</label>
+							    </td>
+							  </tr>
+							  <tr>
+							    <td class="col-md-3">
+							      Builder
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.builder==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'builder')">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'builder')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-1 text-center">
+							      {{$root.jobs.builder}}
+							    </td>
+							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
+							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'builder')">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'builder')" disabled="disabled">
+									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+									</button>
+							    </td>
+							    <td class="col-md-3 text-center">
+							      {{$root.jobsMax.builderMax}}
+							    </td>
+							    <td class="col-md-3">
+							      Build / Demolish
 							    </td>
 							  </tr>
 							  <tr>
@@ -135,8 +175,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.gathererMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Roots, Fruit
 							    </td>
 							  </tr>
 							  <tr>
@@ -165,8 +205,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.hunterMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Meat, Leather
 							    </td>
 							  </tr>
 
@@ -196,8 +236,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.farmerMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Seasonal. Veggies, Fruit
 							    </td>
 							  </tr>
 
@@ -227,8 +267,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.foresterMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Logs
 							    </td>
 							  </tr>
 
@@ -258,8 +298,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.stonecutterMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Stone
 							    </td>
 							  </tr>
 
@@ -289,8 +329,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.minerMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Iron
 							    </td>
 							  </tr>
 
@@ -320,8 +360,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.herbalistMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Herbs
 							    </td>
 							  </tr>
 
@@ -350,41 +390,11 @@
 							    <td class="col-md-3">
 							      <label>Infrastructure for</label>
 							    </td>
-							    <td class="col-md-2">
+							    <td class="col-md-3">
 							      <label>Information</label>
 							    </td>
 							  </tr>
 							  
-							  <tr>
-							    <td class="col-md-3">
-							      Builder
-							    </td>
-							    <td class="col-md-1 text-center" ng-switch="$root.jobs.builder==0">
-							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(false, 'builder')">
-									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-									</button>
-									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(false, 'builder')" disabled="disabled">
-									  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-									</button>
-							    </td>
-							    <td class="col-md-1 text-center">
-							      {{$root.jobs.builder}}
-							    </td>
-							    <td class="col-md-1 text-center" ng-switch="$root.jobs.unemployed==0">
-							      	<button type="button" class="btn btn-default btn-sm" ng-switch-when="false" ng-click="increaseWorkers(true, 'builder')">
-									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
-									</button>
-									<button type="button" class="btn btn-default btn-sm" ng-switch-when="true" ng-click="increaseWorkers(true, 'builder')" disabled="disabled">
-									  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
-									</button>
-							    </td>
-							    <td class="col-md-3 text-center">
-							      {{$root.jobsMax.builderMax}}
-							    </td>
-							    <td class="col-md-2">
-							      Info
-							    </td>
-							  </tr>
 
 							  <tr>
 							    <td class="col-md-3">
@@ -412,8 +422,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.teacherMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Needs Building
 							    </td>
 							  </tr>
 
@@ -443,8 +453,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.woodcutterMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Needs Building
 							    </td>
 							  </tr>
 
@@ -474,8 +484,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.blacksmithMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Needs Building
 							    </td>
 							  </tr>
 
@@ -505,8 +515,8 @@
 							    <td class="col-md-3 text-center">
 							      {{$root.jobsMax.tailorMax}}
 							    </td>
-							    <td class="col-md-2">
-							      Info
+							    <td class="col-md-3">
+							      Needs Building
 							    </td>
 							  </tr>
 
@@ -524,7 +534,7 @@
 					  	<div class="panel panel-default">
 						    <table class="table table-condensed table-bordered table-striped"> 
 						      <tr class="active">
-							    <td class="col-md-3">
+							    <td class="col-md-2">
 							      <label>Building</label>
 							    </td>
 							    <td class="col-md-1">
@@ -545,12 +555,15 @@
 							    <td class="col-md-1">
 							      <label>Capacity</label>
 							    </td>
+							    <td class="col-md-1">
+							      <label>Demolish</label>
+							    </td>
 							    <td class="col-md-2">
 							      <label>Resources</label>
 							    </td>
 							  </tr>
 							  <tr ng-repeat="i in buildings">
-							    <td class="col-md-3">
+							    <td class="col-md-2">
 							      {{i.name}}
 							    </td>
 							    <td class="col-md-1">
@@ -570,6 +583,11 @@
 							    </td>
 							    <td class="col-md-1">
 							      {{i.cap}}
+							    </td>
+							    <td class="col-md-1">
+							      	<div ng-switch="i.have>0&&$root.queue.length<1">
+									  <button type="button" class="btn btn-danger btn-block btn-sm" ng-switch-when="true" ng-click="demolish(i.pass, i.name)"><strong>{{i.name}}</strong></button>
+									</div>
 							    </td>
 							    <td class="col-md-2">
 							      	<div ng-switch="i.logs<=$root.vars.logs&&i.stone<=$root.vars.stone&&i.iron<=$root.vars.iron">

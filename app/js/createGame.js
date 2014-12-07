@@ -30,7 +30,7 @@ $scope.randomTown = function() {
 $scope.radioDifficulty = 'Medium';
 $scope.radioGender = 'Male';
 $scope.radioClimate = 'Mild';
-$scope.radioAge = 'Real';
+$scope.radioAge = 'x5';
 $scope.randomName();
 $scope.randomTown();
 
@@ -80,8 +80,7 @@ $scope.resetValues = function() {
 		  "firewood": 0,
 		  "coats": 0,
 		  "tools": 0,
-		  "herbs": 0,
-		  "wool": 0,
+		  "herbs": 50,
 		  "leather": 0,
 		  "population": 0,
 		  "adultsNum": 0,
@@ -90,13 +89,20 @@ $scope.resetValues = function() {
 		  "haveRoof": 0,
 		  "todayWeather": 20,
 		  "education": 0,
+		  "health": 100,
 		  "day": 1,
-		  "buildingsAllowed": 15,
 		  "productivityEdu": 100,
 		  "productivityCoats": 100,
 		  "productivityHealth": 100,
 		  "productivityTools": 100,
-		  "productivityCold": 100
+		  "productivityCold": 100,
+		  "buildingLimit": 20,
+		  "rawLimit": 2000,
+		  "matLimit": 2000,
+		  "hitRawLimit": false,
+		  "hitMatLimit": false,
+		  "exploreVal": 0,
+		  "exploreMax": 100
 		};
 
 		$rootScope.jobs=
@@ -114,10 +120,7 @@ $scope.resetValues = function() {
 		  	"herbalist": 0,
 		  	"blacksmith": 0,
 		  	"tailor": 0,
-		  	"vendor": 0,
-		  	"teacher": 0,
-		  	"doctor": 0,
-		  	"cleric": 0		  	
+		  	"teacher": 0
 		};
 
 		$rootScope.jobsMax=
@@ -134,31 +137,43 @@ $scope.resetValues = function() {
 		  	"herbalistMax": 0,
 		  	"blacksmithMax": 0,
 		  	"tailorMax": 0,
-		  	"vendorMax": 0,
-		  	"teacherMax": 0,
-		  	"doctorMax": 0,
-		  	"clericMax": 0
+		  	"teacherMax": 0
 		}
 
 		$rootScope.buildings=
 		{
-			"house": {"name":"Yurt","have":0, "logs": 10, "stone": 5, "iron": 0, "type": "Shelter", "cap":3, "pass":"house"},
-			"barn": {"name":"Food Cache","have":0, "logs": 30, "stone": 10, "iron": 0, "type": "Food Storage", "cap":3000, "pass":"barn"},
-			"storage": {"name":"Storage Pit","have":0, "logs": 2, "stone": 2, "iron": 0, "type": "Shelter", "cap":250, "pass":"storage"},
-			"school": {"name":"Village Gathering","have":0, "logs": 8, "stone": 4, "iron": 0, "type": "Education", "cap":5, "pass":"school"}
+			"house": {"name":"Wooden House","have":0, "logs": 16, "stone": 8, "iron": 0, "type": "Shelter", "cap":5, "pass":"house"},
+			"houseStone": {"name":"Stone House","have":0, "logs": 24, "stone": 40, "iron": 8, "type": "Shelter", "cap":10, "pass":"houseStone"},
+			"storagebarn": {"name":"Storage Barn","have":0, "logs": 48, "stone": 16, "iron": 0, "type": "General Storage", "cap":4000, "pass":"storagebarn"},
+			"stockpile": {"name":"Stock Pile","have":0, "logs": 4, "stone": 2, "iron": 0, "type": "Raw Materials", "cap":1500, "pass":"stockpile"},
+			"school": {"name":"School House","have":0, "logs": 50, "stone": 16, "iron": 16, "type": "Education", "cap":20, "pass":"school"},
+			"farmBean": {"name":"Small Farm: Bean Crop","have":0, "logs": 4, "stone": 0, "iron": 0, "type": "Food", "cap":1, "pass":"farmBean"},
+			"farmPotato": {"name":"Large Farm: Potato Crop","have":0, "logs": 10, "stone": 0, "iron": 0, "type": "Food", "cap":2, "pass":"farmPotato"},
+			"orchardApple": {"name":"Apple Orchard","have":0, "logs": 10, "stone": 0, "iron": 0, "type": "Food", "cap":4, "pass":"orchardApple"},
+			"fishingDock": {"name":"Fishing Dock","have":0, "logs": 30, "stone": 16, "iron": 0, "type": "Food", "cap":4, "pass":"fishingDock"},
+			"huntingCabin": {"name":"Hunting Cabin","have":0, "logs": 54, "stone": 12, "iron": 0, "type": "Food", "cap":4, "pass":"huntingCabin"},
+			"gathererHut": {"name":"Gatherer's Hut","have":0, "logs": 30, "stone": 12, "iron": 0, "type": "Food", "cap":4, "pass":"gathererHut"},
+			"woodCutterBuilding": {"name":"Wood Cutter","have":0, "logs": 24, "stone": 8, "iron": 0, "type": "Production", "cap":1, "pass":"woodCutterBuilding"},
+			"lodge": {"name":"Forester's Lodge","have":0, "logs": 32, "stone": 12, "iron": 0, "type": "Gathering", "cap":4, "pass":"lodge"},
+			"herbHut": {"name":"Herbalist's Hut","have":0, "logs": 30, "stone": 12, "iron": 0, "type": "Gathering", "cap":2, "pass":"herbHut"},
+			"blacksmith": {"name":"Blacksmith","have":0, "logs": 55, "stone": 32, "iron": 32, "type": "Production", "cap":1, "pass":"blacksmith"},
+			"tailor": {"name":"Tailor","have":0, "logs": 32, "stone": 48, "iron": 16, "type": "Production", "cap":1, "pass":"tailor"},
+			"mine": {"name":"Iron Mine","have":0, "logs": 48, "stone": 68, "iron": 0, "type": "Gathering", "cap":30, "pass":"mine"},
+			"quarry": {"name":"Stone Quarry","have":0, "logs": 32, "stone": 80, "iron": 40, "type": "Gathering", "cap":30, "pass":"quarry"},
+			"headquarters": {"name":"Builder's Headquarters","have":0, "logs": 20, "stone": 10, "iron": 0, "type": "Building", "cap":5, "pass":"headquarters"}
 		}
 
 		$rootScope.capacity=
 		{
 			"students": 0,
-			"heatEf": 1.5       //wood usage per week
+			"heatEf": 1.5
+
 		}
 
 		$rootScope.conditions=
 		{
 			"starving": 0,
-			"freezing": 0,
-			"sick": 0
+			"freezing": 0
 		}
 
 		$rootScope.adults=[];
@@ -168,7 +183,8 @@ $scope.resetValues = function() {
     	$rootScope.queue = [];  //make rootscope
 
     	if ($scope.radioAge=='Real') $rootScope.vars.day=1;
-    	$rootScope.vars.day=10;
+    	else if ($scope.radioAge=='x10') $rootScope.vars.day=10;
+    	else $rootScope.vars.day=5;
 
 		if ($scope.radioDifficulty=='Easy') {
 			$rootScope.vars.adultsNum=12;
@@ -183,6 +199,8 @@ $scope.resetValues = function() {
 			$rootScope.vars.tools=50;
 			$rootScope.vars.coats=40;
 			$rootScope.vars.education=12;
+			$rootScope.vars.rawLimit=300;
+			$rootScope.vars.matLimit=3000;
 
 		}
 		else if ($scope.radioDifficulty=='Medium') {
@@ -198,6 +216,8 @@ $scope.resetValues = function() {
 			$rootScope.vars.tools=30;
 			$rootScope.vars.coats=30;
 			$rootScope.vars.education=10;
+			$rootScope.vars.rawLimit=250;
+			$rootScope.vars.matLimit=2500;
 		}
 		else if ($scope.radioDifficulty=='Biblical') {
 			$rootScope.vars.adultsNum=2;
@@ -212,6 +232,8 @@ $scope.resetValues = function() {
 			$rootScope.vars.tools=5;
 			$rootScope.vars.coats=5;
 			$rootScope.vars.education=2;
+			$rootScope.vars.rawLimit=100;
+			$rootScope.vars.matLimit=1000;
 		}
 		else {
 			$rootScope.vars.adultsNum=8;
@@ -223,6 +245,8 @@ $scope.resetValues = function() {
 			$rootScope.vars.tools=20;
 			$rootScope.vars.coats=20;
 			$rootScope.vars.education=8;
+			$rootScope.vars.rawLimit=150;
+			$rootScope.vars.matLimit=1500;
 		}
 
 		//http://www.usclimatedata.com/

@@ -17,6 +17,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         middle: false,
         right: false
     };
+
     $scope.save = function(param, name) {
         util.save(param, name);
     }
@@ -43,6 +44,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         $scope.load("defaultTemp");
         $scope.load("conditions");
         $scope.load("capacity");
+        $rootScope.vars.exploreMax=100;
     };  
 
      $scope.saveAll = function() {
@@ -164,7 +166,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
     $scope.ageOneDay = function() {
       //console.log($rootScope.adults[0].birthday);
-      var todayRandom=$scope.random(20000, 1);
+      //var health = $rootScope.vars.health/100;
+      //if (health<10) health=2;
+      var todayRandom=$scope.random(10000 * ($rootScope.vars.health/100), 1);
       for (var i = 0; i < $rootScope.adults.length; i++) {
         $rootScope.adults[i].birthday += $rootScope.vars.day;
         if ($rootScope.adults[i].birthday > 365) {
@@ -174,7 +178,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             if (todayRandom<750) $scope.kill(1, ' died from old age', 1, i);
           }
         }
-        else if (todayRandom==1000) {
+        else if (todayRandom==30) {
             $scope.kill(1, ' died from random event', 1, i); //put in array of random events
             todayRandom=10000;
         }
@@ -192,7 +196,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             $rootScope.vars.adultsNum++;
             $rootScope.students.splice(i, 1);
           }
-          else if (todayRandom==2000) {
+          else if (todayRandom==10) {
             $scope.kill(1, ' died from random event', 2, i); //put in array of random events
             todayRandom=10000;
           } 
@@ -221,7 +225,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             }
           } 
         }
-        else if (todayRandom==3000) {
+        else if (todayRandom==20) {
             $scope.kill(1, ' died from random event', 3, i); //put in array of random events
             todayRandom=10000;
         }
@@ -239,43 +243,106 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $rootScope.vars.childrenNum++;
            
         }
+      }     
+    }
+
+    $scope.limit = function() {
+      if ($rootScope.vars.food+$rootScope.vars.leather+$rootScope.vars.herbs+$rootScope.vars.firewood+$rootScope.vars.tools+$rootScope.vars.coats>=$rootScope.vars.matLimit){
+        $rootScope.vars.hitMatLimit==true;
       }
-       
-       
-     
+      else $rootScope.vars.hitMatLimit==false;
+      if ($rootScope.vars.logs+$rootScope.vars.iron+$rootScope.vars.stone>=$rootScope.vars.rawLimit) {
+        $rootScope.vars.hitRawLimit==true;
+      }
+      else $rootScope.vars.hitRawLimit==false;
+    }
+
+    $scope.calcHealth = function() {
+      var health = 0;
+      if ($rootScope.buildings.farmBean.have>0) health++;
+      if ($rootScope.buildings.farmPotato.have>0) health++;
+      if ($rootScope.buildings.fishingDock.have>0) health++;
+      if ($rootScope.buildings.gathererHut.have>0) health++;
+      if ($rootScope.buildings.huntingCabin.have>0) health++;
+      if ($rootScope.buildings.orchardApple.have>0) health++;
+      health *=15;
+      var herbs = 0;
+      for (var i=100; i>=health; i--) {
+        herbs++;
+      }
+      if (herbs<=$rootScope.vars.herbs) {
+        $rootScope.vars.herbs-=herbs;
+        $rootScope.vars.health = health + herbs;
+        if ($rootScope.vars.health<1) $rootScope.vars.health=1;
+      }
+      else {
+        $rootScope.vars.health = health + $rootScope.vars.herbs;
+        $rootScope.vars.herbs=0;
+        if ($rootScope.vars.health<1) $rootScope.vars.health=1;
+      }
     }
 
     $scope.gather = function() {
-        $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 400);
-        $rootScope.vars.logs += $scope.calculateGather($rootScope.jobs.forester, 400);
-        $rootScope.vars.stone += $scope.calculateGather($rootScope.jobs.stonecutter, 400);
-        $scope.calculateProduction($rootScope.jobs.woodcutter, 'firewood', 400, 'logs', 100);
+      $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.hunter, 1000, $rootScope.jobsMax.hunterMax);
+      $rootScope.vars.leather += $scope.calculateGather($rootScope.jobs.hunter, 50, $rootScope.jobsMax.hunterMax);
+      $rootScope.vars.logs += $scope.calculateGather($rootScope.jobs.forester, 300, $rootScope.jobsMax.foresterMax, 0.33);
+      $rootScope.vars.stone += $scope.calculateGather($rootScope.jobs.stonecutter, 300, $rootScope.jobsMax.stonecutterMax, 0.33);
+      $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.fisherman, 1200, $rootScope.jobsMax.fishermanMax);
+      $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.gatherer, 1000, $rootScope.jobsMax.gathererMax, 0.5);
+      $rootScope.vars.herbs += $scope.calculateGather($rootScope.jobs.herbalist, 100, $rootScope.jobsMax.herbalistMax, 0.1);
+      $rootScope.vars.iron += $scope.calculateGather($rootScope.jobs.miner, 300, $rootScope.jobsMax.minerMax, 0.33);
+      $scope.calculateProduction($rootScope.jobs.woodcutter, $rootScope.jobsMax.woodcutterMax, 'firewood', 900, 'logs', 300);
+      $scope.calculateProduction($rootScope.jobs.blacksmith, $rootScope.jobsMax.blacksmithMax, 'tools', 600, 'logs', 300, 'iron', 300);
+      $scope.calculateProduction($rootScope.jobs.tailor, $rootScope.jobsMax.tailorMax, 'coats', 300, 'leather', 300);
+      if (($scope.date.month()>2)&&($scope.date.month()<10)) {
+        $rootScope.vars.food += $scope.calculateGather($rootScope.jobs.farmer, 3000, $rootScope.jobsMax.farmerMax, 0);
+      }
     }
 
-    $scope.calculateGather = function(people, base1year) {
-        return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * (($rootScope.vars.productivityEdu)/100) * (($rootScope.vars.productivityTools)/100) * (($rootScope.vars.productivityCoats)/100);
-        //35040 - 15 minute intervals in a year
-        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
-        //goes off ~ 100 times (24*4)
+    $scope.calculateGather = function(people, base1year, max, modifier) {
+      if (modifier==undefined) modifier = 0.2;
+      if (max==undefined) max = 0;
+      if (max>=people) {
+      return ($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * (($rootScope.vars.productivityEdu)/100) * (($rootScope.vars.productivityTools)/100) * (($rootScope.vars.productivityCoats)/100);
+      }
+      else {
+        people = people - max;
+        return (($scope.timeStep/100)*$rootScope.multiplier*people*(base1year/35040) * (($rootScope.vars.productivityEdu)/100) * (($rootScope.vars.productivityTools)/100) * (($rootScope.vars.productivityCoats)/100) * modifier) +
+        (($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * (($rootScope.vars.productivityEdu)/100) * (($rootScope.vars.productivityTools)/100) * (($rootScope.vars.productivityCoats)/100)) ;
+
+      }
+
+      //35040 - 15 minute intervals in a year
+      //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
+      //goes off ~ 100 times (24*4)
     }
 
-    $scope.calculateProduction = function(people, base, base1year, mat, mat1year) { //when producing only reduce/increase output for productivity modifiers
-        var needed1 = ($scope.timeStep/100)*$rootScope.multiplier*1*(mat1year/35040); //35040 - 15 minute intervals in a year
-        var max = 0;
-        //console.log($rootScope.vars[mat]);
-        for (var i=1; i<=people+1; i++) {
-          if (needed1*i > $rootScope.vars[mat]) {
-            max = i-1;
-            //console.log(max);
-            break;
-          }
-          else max = people;
+    $scope.calculateProduction = function(people, peopleMax, base, base1year, mat, mat1year, mat2, mat1year2) { //when producing only reduce/increase output for productivity modifiers
+      if (mat1year2==undefined) {
+        mat1year2=0;
+        mat2=mat;
+      }
+
+      var needed1 = ($scope.timeStep/100)*$rootScope.multiplier*1*(mat1year/35040); //35040 - 15 minute intervals in a year
+      var needed2 = ($scope.timeStep/100)*$rootScope.multiplier*1*(mat1year2/35040); //35040 - 15 minute intervals in a year
+      if (people>peopleMax) people=peopleMax;
+      var max = 0;
+      //console.log($rootScope.vars[mat]);
+      for (var i=1; i<=people+1; i++) {
+        if (needed1*i > $rootScope.vars[mat]||needed2*i > $rootScope.vars[mat2]) {
+          max = i-1;
+          //console.log(max);
+          break;
         }
-        var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * ($rootScope.vars.productivityEdu)/100 * ($rootScope.vars.productivityTools)/100 * ($rootScope.vars.productivityCoats)/100;
-        $rootScope.vars[mat] -= needed1 * max;
-        $rootScope.vars[base] += created;
-        //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
-        //goes off ~ 100 times (24*4)
+        else max = people;
+      }
+      var created = ($scope.timeStep/100)*$rootScope.multiplier*max*(base1year/35040) * ($rootScope.vars.productivityEdu)/100 * ($rootScope.vars.productivityTools)/100 * ($rootScope.vars.productivityCoats)/100;
+      $rootScope.vars[mat] -= needed1 * max;
+      $rootScope.vars[base] += created;
+      $rootScope.vars[mat2] -= needed2 * max;
+     
+      //return ($scope.timeStep/100)*$rootScope.multiplier*people*base15min;
+      //goes off ~ 100 times (24*4)
     }
 
     $scope.eat = function() {
@@ -316,7 +383,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           //console.log("gratis");
         }
         else {
-          if ($rootScope.vars.todayWeather >= 0) console.log("You should build some houses before your villagers freeze to death");
+          if ($rootScope.vars.todayWeather >= 0) {
+            if ($rootScope.vars.population > $rootScope.vars.haveRoof) console.log("You should build some houses before your villagers freeze to death");
+          } 
           else $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from freezing outside'); 
         }
 
@@ -369,6 +438,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $scope.calcHomeless();
           $scope.calcStudent();
           $scope.calcProductivity();
+          $scope.calcJobMax();
+          
           //temperature generation
           if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
             $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
@@ -385,7 +456,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
           if ($scope.date.month() != $scope.monthOld) {//new month
               $scope.monthOld=$scope.date.month();
+              $scope.useToolsCoats();
               $scope.makeBaby();
+              $scope.calcHealth();
              //console.log("month " + $scope.monthOld);
              //console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
              //console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
@@ -400,10 +473,11 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           }
       }
       //$scope.calcHomeless();
-      $scope.gather();
+      $scope.limit();
+      if (!$rootScope.vars.hitRawLimit||!$rootScope.vars.hitMatLimit) $scope.gather();
       $scope.maxBarCalc();
       $scope.buildProcess();
-      
+      $scope.explorationCalc();
       
 
       //console.log($scope.date.hour());
@@ -420,6 +494,24 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       if (maxHousing>=$rootScope.vars.population) $rootScope.vars.haveRoof = $rootScope.vars.population;
       else $rootScope.vars.haveRoof = maxHousing;
+    }
+
+   
+
+    $scope.calcJobMax = function() {
+      $rootScope.jobsMax.builderMax = $rootScope.buildings.headquarters.have * $rootScope.buildings.headquarters.cap;
+      $rootScope.jobsMax.farmerMax = $rootScope.buildings.farmBean.have * $rootScope.buildings.farmBean.cap + $rootScope.buildings.farmPotato.have * $rootScope.buildings.farmPotato.cap + $rootScope.buildings.orchardApple.have * $rootScope.buildings.orchardApple.cap;
+      $rootScope.jobsMax.gathererMax = $rootScope.buildings.gathererHut.have * $rootScope.buildings.gathererHut.cap;
+      $rootScope.jobsMax.fishermanMax = $rootScope.buildings.fishingDock.have * $rootScope.buildings.fishingDock.cap;
+      $rootScope.jobsMax.hunterMax = $rootScope.buildings.huntingCabin.have * $rootScope.buildings.huntingCabin.cap;
+      $rootScope.jobsMax.woodcutterMax = $rootScope.buildings.woodCutterBuilding.have * $rootScope.buildings.woodCutterBuilding.cap;
+      $rootScope.jobsMax.foresterMax = $rootScope.buildings.lodge.have * $rootScope.buildings.lodge.cap;
+      $rootScope.jobsMax.minerMax = $rootScope.buildings.mine.have * $rootScope.buildings.mine.cap;
+      $rootScope.jobsMax.stonecutterMax = $rootScope.buildings.quarry.have * $rootScope.buildings.quarry.cap;
+      $rootScope.jobsMax.herbalistMax = $rootScope.buildings.herbHut.have * $rootScope.buildings.herbHut.cap;
+      $rootScope.jobsMax.blacksmithMax = $rootScope.buildings.blacksmith.have * $rootScope.buildings.blacksmith.cap;
+      $rootScope.jobsMax.tailorMax = $rootScope.buildings.tailor.have * $rootScope.buildings.tailor.cap;
+      $rootScope.jobsMax.teacherMax = $rootScope.buildings.school.have * $rootScope.buildings.school.cap;
     }
 
     $scope.calcStudent = function() {
@@ -452,23 +544,29 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.education=count;
       $rootScope.vars.productivityEdu=($rootScope.vars.education/$rootScope.vars.adultsNum) * 100;
       $rootScope.vars.productivityEdu = Math.round($rootScope.vars.productivityEdu + ($rootScope.vars.productivityEdu/4));
-	  console.log("edu" + $rootScope.vars.productivityEdu);
+	    //console.log("edu" + $rootScope.vars.productivityEdu);
       //$rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
-	  if ($rootScope.vars.tools<$rootScope.vars.adultsNum) {
-		$rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
-		$rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/6));
-	  }
-	  else $rootScope.vars.productivityTools = 100;
-	  console.log("tools" + $rootScope.vars.productivityTools);
+  	  if ($rootScope.vars.tools<$rootScope.vars.adultsNum) {
+  		$rootScope.vars.productivityTools=($rootScope.vars.tools/$rootScope.vars.adultsNum) * 100;
+  		$rootScope.vars.productivityTools = Math.round($rootScope.vars.productivityTools + ($rootScope.vars.productivityTools/6));
+  	  }
+  	  else $rootScope.vars.productivityTools = 100;
+  	  //console.log("tools" + $rootScope.vars.productivityTools);
       
-      $rootScope.vars.productivityCoats=($rootScope.vars.coats/$rootScope.vars.adultsNum) * 100;
-      if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
-      else if ($rootScope.vars.todayWeather < 20) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/2));
-      else if ($rootScope.vars.todayWeather < 15) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/3));
-      else if ($rootScope.vars.todayWeather < 10) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/4));
-      else if ($rootScope.vars.todayWeather < 5) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/7));
-      else $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/10));
-      console.log("coats" + $rootScope.vars.productivityCoats);
+      if ($rootScope.vars.coats<$rootScope.vars.adultsNum) {
+        $rootScope.vars.productivityCoats=($rootScope.vars.coats/$rootScope.vars.adultsNum) * 100;
+        if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
+        else if ($rootScope.vars.todayWeather < 20) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/2));
+        else if ($rootScope.vars.todayWeather < 15) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/3));
+        else if ($rootScope.vars.todayWeather < 10) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/4));
+        else if ($rootScope.vars.todayWeather < 5) $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/7));
+        else $rootScope.vars.productivityCoats = Math.round($rootScope.vars.productivityCoats + ($rootScope.vars.productivityCoats/10));
+      }
+      else {
+        if ($rootScope.vars.todayWeather >= 20) $rootScope.vars.productivityCoats=125;
+        else $rootScope.vars.productivityCoats=100;
+      }
+      //console.log("coats" + $rootScope.vars.productivityCoats);
     }
 
     $scope.maxBarCalc = function() {
@@ -484,6 +582,22 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
         $scope.valBar[i]=(logs + stone + iron);
       }
+    }
+
+    $scope.explorationCalc = function() {
+
+      var explore = $rootScope.jobs.unemployed;
+      if (($scope.date.month()<3)||($scope.date.month()>9)) explore += $rootScope.jobs.farmer;
+      var add=$scope.calculateGather(explore, 365, 1000000, 1);
+      //explore = explore / 24;
+      if ($rootScope.vars.exploreVal>$rootScope.vars.exploreMax) {
+        $rootScope.vars.buildingLimit++;
+        $rootScope.vars.exploreVal=0;
+      }
+
+      $rootScope.vars.exploreMax = $rootScope.vars.buildingLimit * ($rootScope.vars.buildingLimit);
+      $rootScope.vars.exploreVal += add;
+      //console.log($rootScope.vars.exploreVal);
     }
 
     $scope.makeBaby = function() {
@@ -519,6 +633,16 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //console.log('length' + $rootScope.babies.length);
     }
 
+    $scope.useToolsCoats = function() {
+      var usage = Math.round($rootScope.vars.adultsNum / 12);
+      if ($rootScope.vars.tools - usage > 0) $rootScope.vars.tools -= usage;
+      else $rootScope.vars.tools=0;
+      if ($rootScope.vars.todayWeather<15) {
+        if ($rootScope.vars.coats - usage > 0) $rootScope.vars.coats -= usage;
+        else $rootScope.vars.coats=0;
+      }
+    }
+
     $scope.build = function(name, pretty) {
       //$scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
       //var logs = $rootScope.vars.logs;
@@ -532,11 +656,44 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
       $rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
       //$rootScope.buildings[bname]['have']++;
-      $rootScope.queue.push({"name":pretty, "pass":name});
+      $rootScope.queue.push({"name":pretty, "pass":name, "demolish":false});
     }
 
+    $scope.demolish = function(name, pretty) {
+      //$scope.maxBar=$rootScope.buildings[name]['logs']+$rootScope.buildings[name]['stone']+$rootScope.buildings[name]['iron'];
+      //var logs = $rootScope.vars.logs;
+      //if (logs > $rootScope.buildings[name]['logs']) logs = $rootScope.buildings[name]['logs'];
+      //var stone = $rootScope.vars.stone;
+      //if (stone > $rootScope.buildings[name]['stone']) stone = $rootScope.buildings[name]['stone'];
+      //var iron = $rootScope.vars.iron; 
+      //if (iron > $rootScope.buildings[name]['iron']) iron = $rootScope.buildings[name]['iron'];
+      //$scope.valBar= logs + stone + iron;
+      //$rootScope.vars.logs -= $rootScope.buildings[name]['logs'];
+      //$rootScope.vars.stone -= $rootScope.buildings[name]['stone'];
+      //$rootScope.vars.iron -= $rootScope.buildings[name]['iron'];
+      //$rootScope.buildings[bname]['have']++;
+      $rootScope.queue.push({"name":"Demolish " + pretty, "pass":name, "demolish":true});
+    }
+
+    $scope.popQueue = function() {
+      
+      if ($rootScope.queue.length>0) {
+        //console.log("popquie");
+        var name = $rootScope.queue[$rootScope.queue.length-1]['pass'];
+        //console.log(name);
+        if ($rootScope.queue[$rootScope.queue.length-1]['demolish']==false) {
+        $rootScope.vars.logs += $rootScope.buildings[name]['logs'];
+        $rootScope.vars.stone += $rootScope.buildings[name]['stone'];
+        $rootScope.vars.iron += $rootScope.buildings[name]['iron'];
+        }
+        $rootScope.queue.pop();
+        $scope.buildBarMax=100;
+        $scope.buildBarVal=0;
+      }
+    };
+
     $scope.buildProcess = function() {
-      var power = $scope.calculateGather($rootScope.jobs.builder, 365);
+      var power = $scope.calculateGather($rootScope.jobs.builder, 365, $rootScope.jobsMax.builderMax);
       if ($rootScope.queue.length>0) {
         var name = $rootScope.queue[0]['pass'];
         //console.log(name);
@@ -545,14 +702,25 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         if ($scope.buildBarVal>=$scope.buildBarMax) {
           $scope.buildBarMax=100;
           $scope.buildBarVal=0;
-          $rootScope.buildings[name]['have']++;
-          $rootScope.queue.shift();
+          console.log($rootScope.queue[0]['demolish']);
+          if ($rootScope.queue[0]['demolish']==false) {
+            $rootScope.buildings[name]['have']++;
+            $rootScope.queue.shift();
+          }
+          else if ($rootScope.queue[0]['demolish']==true) {
+            $rootScope.vars.logs += ($rootScope.buildings[name]['logs'])/2;
+            $rootScope.vars.stone += ($rootScope.buildings[name]['stone'])/2;
+            $rootScope.vars.iron += ($rootScope.buildings[name]['iron'])/2;
+            $rootScope.buildings[name]['have']--;
+            $rootScope.queue.shift();
+          }
         }
       }
       else {
         $scope.buildBarMax=100;
         $scope.buildBarVal=0;
       }
+      //$scope.calcJobMax();
     }
 
     
