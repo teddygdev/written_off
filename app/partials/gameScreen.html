@@ -1,4 +1,23 @@
 <div class="container">
+	<div class="row">
+		
+		<div class="col-md-12" style="height: 20vh;overflow-y: scroll;" scroll-glue="glued">
+			<div class="panel panel-default">
+	          <table>
+	          	<tr ng-repeat="i in gamelog track by $index">
+			    <td class="col-md-2">
+			      {{i.date}}
+			    </td>
+			    <td class="col-md-10">
+			      {{i.event}}
+			    </td>
+			    </tr>
+			  </table>
+	    	</div>
+	    
+	    </div>
+    </div>
+    <p></p>
 	<div class="panel panel-default" style="height: 20px">
 		<progressbar max="$root.vars.exploreMax" value="$root.vars.exploreVal * 100 / $root.vars.exploreMax" type="primary"><strong class="strokeme">Exploration and Clearing</strong></progressbar>
 	</div>
@@ -35,6 +54,7 @@
 		</div>
 
 		
+		
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-default" style="height: 20px">
@@ -48,6 +68,16 @@
 	    	</div>
 
     	</div>
+    	<div class="row" ng-if="$root.vars.population<1">
+			<div class="col-md-12">
+				<h1 class="bg-danger">All your villagers have died and you have lost the game. Sorry ;_;</h1>
+				<div class="col-md-12">
+							<button class="btn btn-success btn-block" ng-click="startNewGame()"> <span class="glyphicon glyphicon-star"></span> Start a new game!</button>
+				</div>
+	    	</div>
+
+    	</div>
+
     	<p></p>
 
     	<div class="row">
@@ -610,50 +640,6 @@
             </div>
         </div>
 
-		<div collapse="isCollapsedGather">
-			<div class="row">
-				<div class="col-md-12">
-					<button ng-click="clearGatheringNotications()" class="btn btn-primary btn-xs btn-block" role="button">Clear Gathering Notifications</button>
-				</div>
-			</div>
-
-			<p></p>
-
-			<div class="row">
-			  	<div class="col-md-6">
-			  		<button ng-click="clickFood()" class="btn btn-default btn-lg btn-block" role="button">Gather Food (10% chance)</button>
-			  	</div>
-			  	<div class="col-md-6">
-			  		<div ng-click="hideBadFood()" ng-hide="hideBadFoodVal" class="label label-danger ng-hide">Unsuccessful attempts in a row: {{foodAttempts}}</div>
-			  	</div>
-			  	<div class="col-md-6">
-			  		<div ng-click="hideGoodFood()" ng-hide="hideGoodFoodVal" class="label label-success ng-hide">Successfully Gathered 1 food</div>
-			  	</div>
-			</div>
-
-			<p></p>
-
-			<div class="row">
-			  	<div class="col-md-6">
-					<a href="#" class="btn btn-default btn-lg btn-block" role="button">Wood</a>
-			 	</div>
-			</div>
-
-			<p></p>
-
-			<div class="row">
-			  	<div class="col-md-6">
-					<a href="#" class="btn btn-default btn-lg btn-block" role="button">Stone</a>
-			 	</div>
-			</div>
-
-			<p></p>
-
-			<div class="row">
-			  	<div class="col-md-6">
-					<a href="#" class="btn btn-default btn-lg btn-block" role="button">Iron</a>
-			 	</div>
-			</div>
-		</div>
+	
 
 </div>

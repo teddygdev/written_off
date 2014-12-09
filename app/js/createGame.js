@@ -53,6 +53,7 @@ $scope.startNewGame = function() {
 		  	$scope.save($rootScope.defaultTemp, "defaultTemp");
 		  	$scope.save($rootScope.conditions, "conditions");
 		  	$scope.save($rootScope.capacity, "capacity");
+		  	$scope.save($rootScope.gamelog, "gamelog");
 		    $location.url('/game');
 
 		  }
@@ -176,6 +177,8 @@ $scope.resetValues = function() {
 			"freezing": 0
 		}
 
+		$rootScope.gamelog=[];
+		$rootScope.gamelog.push({'date':'Year 0001 Mar 1st', 'event':'Game Started'});
 		$rootScope.adults=[];
 		$rootScope.students=[];
 		$rootScope.children=[];		

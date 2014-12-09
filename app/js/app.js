@@ -13,7 +13,9 @@ angular.module('writtenOffApp', [
   'writtenOffApp.navbar',
   'ui.bootstrap',
   'ui.bootstrap.showErrors',
-  'LocalStorageModule'
+  'LocalStorageModule',
+  'sf.virtualScroll',
+  'luegg.directives'
 ]).
 config(['$routeProvider','localStorageServiceProvider', function($routeProvider, localStorageServiceProvider) {
   $routeProvider.otherwise({redirectTo: '/welcome'});

@@ -11,7 +11,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
   });
 }])
 
-.controller('gameScreenCtrl', ['$scope', '$timeout', '$rootScope', 'util',  function($scope, $timeout, $rootScope, util) {
+.controller('gameScreenCtrl', ['$scope', '$timeout', '$rootScope', 'util','$location',  function($scope, $timeout, $rootScope, util, $location) {
     $scope.checkModel = {
         manualGather: false,
         middle: false,
@@ -44,6 +44,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         $scope.load("defaultTemp");
         $scope.load("conditions");
         $scope.load("capacity");
+        $scope.load("gamelog");
         $rootScope.vars.exploreMax=100;
     };  
 
@@ -62,15 +63,71 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       $scope.save($rootScope.defaultTemp, "defaultTemp");
       $scope.save($rootScope.conditions, "conditions");
       $scope.save($rootScope.capacity, "capacity");
+      $scope.save($rootScope.gamelog, "gamelog");
+
     };  
 
     $scope.random = function(max, min) { //max is not inclusive
       return Math.floor(Math.random() * (max - min) + min);
     }
 
-    $scope.doCollapse = function() {
-        $scope.isCollapsedGather = !$scope.checkModel.manualGather;
+    $scope.gameLoopTick = function() {
+      if ($scope.date.dayOfYear() != $scope.dayOld) { //new day
+          $scope.dayOld=$scope.date.dayOfYear();
+          $scope.ageOneDay();
+          $scope.calcHomeless();
+          $scope.calcStudent();
+          $scope.calcProductivity();
+          $scope.calcJobMax();
+
+          
+          //temperature generation
+          if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
+            $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
+          }
+          else if (($rootScope.defaultTemp[$scope.monthOld].max<0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
+            $rootScope.vars.todayWeather=$scope.random(Math.abs($rootScope.defaultTemp[$scope.monthOld].min), Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
+            $rootScope.vars.todayWeather *= -1;
+          }
+          else if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
+            $rootScope.vars.todayWeather=Math.floor(Math.random() * ($rootScope.defaultTemp[$scope.monthOld].max + Math.abs($rootScope.defaultTemp[$scope.monthOld].min))) - Math.abs($rootScope.defaultTemp[$scope.monthOld].min);
+            if ($rootScope.vars.todayWeather >= 0) $rootScope.vars.todayWeather++;
+          }
+          
+
+          if ($scope.date.month() != $scope.monthOld) {//new month
+              $scope.monthOld=$scope.date.month();
+              $scope.useToolsCoats();
+              $scope.makeBaby();
+              $scope.calcHealth();
+             //console.log("month " + $scope.monthOld);
+             //console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
+             //console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
+          }
+
+          if ($scope.date.week() != $scope.weekOld) {//new week
+              $scope.weekOld=$scope.date.week();
+              $scope.eat();
+              if ($rootScope.vars.todayWeather < 10) $scope.houseHeating();
+              //console.log("week " + $scope.weekOld);
+              $scope.saveAll();
+          }
+      }
+      //$scope.calcHomeless();
+      $scope.limit();
+      if (!$rootScope.vars.hitRawLimit||!$rootScope.vars.hitMatLimit) $scope.gather();
+      $scope.maxBarCalc();
+      $scope.buildProcess();
+      $scope.explorationCalc();
+      $scope.lose();
+      
+
+      //console.log($scope.date.hour());
+      $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
+      $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
     };
+
+    
 
     $scope.resetJobs = function() {
         for (var i in $rootScope.jobs) {
@@ -118,7 +175,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
                   if ($rootScope.jobs[j] > 0) {
                     if (cnt2==stop) {
                       $rootScope.jobs[j]--;
-                      console.log($rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age);
+                      //console.log($rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age);
+                      $rootScope.gamelog.push({'date':$scope.datePretty, 'event':$rootScope.adults[toDie].name + ' the ' + j + death + ' at age ' + $rootScope.adults[toDie].age});
                     }
                     cnt2++;
                   }
@@ -135,7 +193,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
                 $rootScope.vars.studentsNum--;
                 var toDie = $scope.random($rootScope.students.length, 0);
                 if (death==' died from old age') death = ' died from a disease';
-                console.log($rootScope.students[toDie].name + ' the student'+ death + ' at age ' + $rootScope.students[toDie].age);
+                //console.log($rootScope.students[toDie].name + ' the student'+ death + ' at age ' + $rootScope.students[toDie].age);
+                $rootScope.gamelog.push({'date':$scope.datePretty, 'event':$rootScope.students[toDie].name + ' the student'+ death + ' at age ' + $rootScope.students[toDie].age});
                 $rootScope.students.splice(toDie, 1);
               }
               else {
@@ -148,7 +207,8 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
                 $rootScope.vars.childrenNum--;
                 var toDie = $scope.random($rootScope.children.length, 0);
                 if (death==' died from old age') death = ' died from a disease';
-                console.log($rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age);
+                //console.log($rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age);
+                $rootScope.gamelog.push({'date':$scope.datePretty, 'event':$rootScope.children[toDie].name + ' the child'+ death + ' at age ' + $rootScope.children[toDie].age});
                 $rootScope.children.splice(toDie, 1);
               }
               else {
@@ -168,7 +228,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //console.log($rootScope.adults[0].birthday);
       //var health = $rootScope.vars.health/100;
       //if (health<10) health=2;
-      var todayRandom=$scope.random(10000 * ($rootScope.vars.health/100), 1);
+      if ($scope.date.year()<2) {
+        var todayRandom=10000;
+      }
+      else {
+        var todayRandom=$scope.random(10000 * ($rootScope.vars.health/100), 1);
+      }
       for (var i = 0; i < $rootScope.adults.length; i++) {
         $rootScope.adults[i].birthday += $rootScope.vars.day;
         if ($rootScope.adults[i].birthday > 365) {
@@ -179,7 +244,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           }
         }
         else if (todayRandom==30) {
-            $scope.kill(1, ' died from random event', 1, i); //put in array of random events
+            $scope.kill(1, ' died from sickness', 1, i); //put in array of random events
             todayRandom=10000;
         }
       }
@@ -195,9 +260,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             $rootScope.vars.studentsNum--;
             $rootScope.vars.adultsNum++;
             $rootScope.students.splice(i, 1);
+            $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'You have a new educated worker.'});
           }
           else if (todayRandom==10) {
-            $scope.kill(1, ' died from random event', 2, i); //put in array of random events
+            $scope.kill(1, ' died from sickness', 2, i); //put in array of random events
             todayRandom=10000;
           } 
         }
@@ -214,6 +280,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
               $rootScope.children.splice(i, 1);
               $rootScope.vars.studentsNum++;
               $rootScope.vars.childrenNum--;
+              $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'A child has become a student'});
             }
             else {
               $rootScope.adults.push({'name': $rootScope.children[i].name, 'age': $rootScope.children[i].age, 'gender':$rootScope.children[i].gender,
@@ -222,11 +289,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
               $rootScope.jobs.unemployed++;
               $rootScope.vars.childrenNum--;
               $rootScope.vars.adultsNum++;
+              $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'You have a new uneducated worker.'});
             }
           } 
         }
         else if (todayRandom==20) {
-            $scope.kill(1, ' died from random event', 3, i); //put in array of random events
+            $scope.kill(1, ' died from sickness', 3, i); //put in array of random events
             todayRandom=10000;
         }
       }
@@ -241,18 +309,29 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           $rootScope.babies.splice(i, 1);
           $rootScope.vars.population++;
           $rootScope.vars.childrenNum++;
+          $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'A child has been born'});
            
         }
       }     
     }
 
     $scope.limit = function() {
+      if ($rootScope.buildings.storagebarn.have>0) {
+        $rootScope.vars.matLimit = $rootScope.buildings.storagebarn.have * $rootScope.buildings.storagebarn.cap;
+      }
+      if ($rootScope.buildings.stockpile.have>0) {
+        $rootScope.vars.rawLimit = $rootScope.buildings.stockpile.have * $rootScope.buildings.stockpile.cap;
+      }
+
+
       if ($rootScope.vars.food+$rootScope.vars.leather+$rootScope.vars.herbs+$rootScope.vars.firewood+$rootScope.vars.tools+$rootScope.vars.coats>=$rootScope.vars.matLimit){
         $rootScope.vars.hitMatLimit==true;
+        $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'Build a new storage barn. The limit has been reached.'});
       }
       else $rootScope.vars.hitMatLimit==false;
       if ($rootScope.vars.logs+$rootScope.vars.iron+$rootScope.vars.stone>=$rootScope.vars.rawLimit) {
         $rootScope.vars.hitRawLimit==true;
+        $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'Build a new stockpile. The limit has been reached.'});
       }
       else $rootScope.vars.hitRawLimit==false;
     }
@@ -375,6 +454,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
     }
 
+
     $scope.houseHeating = function() {
       //$rootScope.buildings.house=10;
       //$rootScope.vars.haveRoof = $rootScope.vars.population;
@@ -384,7 +464,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
         else {
           if ($rootScope.vars.todayWeather >= 0) {
-            if ($rootScope.vars.population > $rootScope.vars.haveRoof) console.log("You should build some houses before your villagers freeze to death");
+            if ($rootScope.vars.population > $rootScope.vars.haveRoof) $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'You should build some houses before your villagers freeze to death'});
           } 
           else $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from freezing outside'); 
         }
@@ -396,7 +476,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
           //console.log('pop:'+$rootScope.vars.population);
           //console.log('roof'+$rootScope.vars.haveRoof);
         }
-        if ($rootScope.vars.todayWeather >= 0) console.log("You should build some houses before your villagers freeze to death");
+        if ($rootScope.vars.todayWeather >= 0) $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'You should build some houses before your villagers freeze to death'});
         else $scope.kill($rootScope.vars.population - $rootScope.vars.haveRoof, ' died from freezing outside'); 
         var woodNeed = Math.round(($rootScope.vars.haveRoof / $rootScope.buildings.house.cap) * $rootScope.capacity.heatEf);
           //console.log(foodNeed);
@@ -431,59 +511,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
     
 
-    $scope.gameLoopTick = function() {
-      if ($scope.date.dayOfYear() != $scope.dayOld) { //new day
-          $scope.dayOld=$scope.date.dayOfYear();
-          $scope.ageOneDay();
-          $scope.calcHomeless();
-          $scope.calcStudent();
-          $scope.calcProductivity();
-          $scope.calcJobMax();
-          
-          //temperature generation
-          if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min>=0)) {
-            $rootScope.vars.todayWeather=$scope.random($rootScope.defaultTemp[$scope.monthOld].max, $rootScope.defaultTemp[$scope.monthOld].min);
-          }
-          else if (($rootScope.defaultTemp[$scope.monthOld].max<0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
-            $rootScope.vars.todayWeather=$scope.random(Math.abs($rootScope.defaultTemp[$scope.monthOld].min), Math.abs($rootScope.defaultTemp[$scope.monthOld].max));
-            $rootScope.vars.todayWeather *= -1;
-          }
-          else if (($rootScope.defaultTemp[$scope.monthOld].max>=0)&&($rootScope.defaultTemp[$scope.monthOld].min<0)) {
-            $rootScope.vars.todayWeather=Math.floor(Math.random() * ($rootScope.defaultTemp[$scope.monthOld].max + Math.abs($rootScope.defaultTemp[$scope.monthOld].min))) - Math.abs($rootScope.defaultTemp[$scope.monthOld].min);
-            if ($rootScope.vars.todayWeather >= 0) $rootScope.vars.todayWeather++;
-          }
-          
 
-          if ($scope.date.month() != $scope.monthOld) {//new month
-              $scope.monthOld=$scope.date.month();
-              $scope.useToolsCoats();
-              $scope.makeBaby();
-              $scope.calcHealth();
-             //console.log("month " + $scope.monthOld);
-             //console.log("max:" + $rootScope.defaultTemp[$scope.monthOld].max);
-             //console.log("min:" + $rootScope.defaultTemp[$scope.monthOld].min);
-          }
-
-          if ($scope.date.week() != $scope.weekOld) {//new week
-              $scope.weekOld=$scope.date.week();
-              $scope.eat();
-              if ($rootScope.vars.todayWeather < 10) $scope.houseHeating();
-              //console.log("week " + $scope.weekOld);
-              $scope.saveAll();
-          }
-      }
-      //$scope.calcHomeless();
-      $scope.limit();
-      if (!$rootScope.vars.hitRawLimit||!$rootScope.vars.hitMatLimit) $scope.gather();
-      $scope.maxBarCalc();
-      $scope.buildProcess();
-      $scope.explorationCalc();
-      
-
-      //console.log($scope.date.hour());
-      $scope.date.add((($scope.timeStep/100)*15*$rootScope.multiplier), 'm');
-      $scope.datePretty = $scope.date.format('[Year] YYYY MMM Do');
-    };
 
     $scope.calcHomeless = function() {
       $rootScope.vars.haveRoof = $rootScope.buildings.house.have * $rootScope.buildings.house.cap;
@@ -494,6 +522,13 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
       if (maxHousing>=$rootScope.vars.population) $rootScope.vars.haveRoof = $rootScope.vars.population;
       else $rootScope.vars.haveRoof = maxHousing;
+    }
+
+    $scope.lose = function() {
+      if ($rootScope.vars.population<1) {
+        $timeout.cancel($scope.timer);
+        $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'You have lost the game.'});
+      }
     }
 
    
@@ -528,7 +563,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
             $rootScope.vars.studentsNum--;
             $rootScope.vars.adultsNum++;
             $rootScope.students.splice(i, 1);
-            console.log("dropped a student");
+            $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'A student has dropped out of school and become a worker.'});
       }
     }
 
@@ -593,6 +628,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       if ($rootScope.vars.exploreVal>$rootScope.vars.exploreMax) {
         $rootScope.vars.buildingLimit++;
         $rootScope.vars.exploreVal=0;
+        $rootScope.gamelog.push({'date':$scope.datePretty, 'event':'More of the terrain has been explored. You can now build one more building.'});
       }
 
       $rootScope.vars.exploreMax = $rootScope.vars.buildingLimit * ($rootScope.vars.buildingLimit);
@@ -724,37 +760,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     }
 
     
-    $scope.clickFood = function() {
-    	var random = Math.floor((Math.random() * 100) + 1);
-    	if (random < 10) {
-    		$scope.food = $scope.food + 1;
-    		$scope.hideGoodFoodVal = false;
-    		$scope.hideBadFoodVal = true;
-    		$scope.foodAttempts = 0;	
-    	}
-    	else {
-    		$scope.hideBadFoodVal = false;
-    		$scope.hideGoodFoodVal = true;
-    		$scope.foodAttempts = $scope.foodAttempts + 1;
-    	} 
-        
-    };
-
-    $scope.hideBadFood = function() {
-    	$scope.hideBadFoodVal=true;
-        
-    };
-
-    $scope.hideGoodFood = function() {
-    	$scope.hideGoodFoodVal=true;
-        
-    };
-
-    $scope.clearGatheringNotications = function() {
-        $scope.hideBadFoodVal=true;
-        $scope.hideGoodFoodVal=true;
-    };
-
+    
     $scope.fpsMinus = function() {
         if ($scope.fps>1) $scope.fps--;
         $scope.timeStep = 1000/$scope.fps;
@@ -782,6 +788,10 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         }
     };
 
+    $scope.startNewGame = function() {
+        $location.url('/newgame');     
+    };
+
     
     //to deal with page changes
     $scope.$on("$destroy", function( event ) {
@@ -790,9 +800,9 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
 
 
 
-    $scope.doCollapse();
+   
     $scope.optionsCollapsed = true;
-    $scope.buildingsCollapsed = false;
+    $scope.buildingsCollapsed = true;
     $scope.professionsCollapsed = true;
     $scope.fps=10;
 
@@ -810,10 +820,12 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
     //console.log($rootScope.children);
     //console.log($rootScope.jobs.unemployed);
 
-    $scope.hideBadFoodVal = true;
-    $scope.hideGoodFoodVal = true;
-    $scope.foodAttempts = 0;
-    $scope.loadAll();
+    try {
+      $scope.loadAll();
+    }
+    catch (err) {
+       $location.url('/newgame'); 
+    }
     $scope.saveAll();
     $scope.maxBar={};
     $scope.valBar={};
@@ -864,6 +876,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
         //calculations for compensation
         //        
         //console.log("count");
+        if ($rootScope.vars.population>0)
         $scope.gameLoopTick();
         c4++;
       };
@@ -872,6 +885,7 @@ angular.module('writtenOffApp.gameScreen', ['ngRoute', 'ui.bootstrap'])
       //calculations inside windows
       //
       //console.log("count2");
+      if ($rootScope.vars.population>0)
       $scope.gameLoopTick();
       //if(c4 < limit) $timeout(compensation, delta); #optional limit
      $scope.timer = $timeout(compensation, delta);
